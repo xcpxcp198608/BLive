@@ -1,1 +1,1 @@
-include ':app', ':RTMP'
+include ':app', ':rtmp'

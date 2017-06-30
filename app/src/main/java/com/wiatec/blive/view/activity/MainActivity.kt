@@ -3,7 +3,6 @@ package com.wiatec.blive.view.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
-import android.hardware.camera2.params.MeteringRectangle
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
@@ -83,7 +82,7 @@ class MainActivity : BaseActivity (){
 
     private fun initFloatActionButton() {
         btFloatingAction.setOnClickListener {
-            val intent = Intent(this , RecorderActivity1::class.java)
+            val intent = Intent(this , RecorderActivity::class.java)
             intent.putExtra(KEY_URL, DEFAULT_RTMP_URL)
             startActivity(intent)
         }

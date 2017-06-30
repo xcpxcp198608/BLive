@@ -11,11 +11,8 @@ import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.alex.livertmppushsdk.FdkAacEncode;
-import com.alex.livertmppushsdk.RtmpSessionManager;
-import com.alex.livertmppushsdk.SWVideoEncoder;
-import com.wiatec.blive.R;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
@@ -27,7 +24,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,15 +36,17 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.content.Intent;
 import android.view.KeyEvent;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 
-//livertmppush
+import com.alex.livertmppushsdk.FdkAacEncode;
+import com.alex.livertmppushsdk.RtmpSessionManager;
+import com.alex.livertmppushsdk.SWVideoEncoder;
+import com.wiatec.blive.R;
 
-public class RecorderActivity extends AppCompatActivity {
+public class RecorderActivity extends Activity {
     private final static int ID_RTMP_PUSH_START = 100;
     private final static int ID_RTMP_PUSH_EXIT = 101;
     private final int WIDTH_DEF = 480;
@@ -488,8 +486,6 @@ public class RecorderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recorder);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        Intent intent = getIntent();
-        _rtmpUrl = intent.getStringExtra("url");
 
         InitAll();
 
@@ -509,7 +505,7 @@ public class RecorderActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+//        int id = item.getItemId();
 //        if (id == R.id.action_settings) {
 //            return true;
 //        }

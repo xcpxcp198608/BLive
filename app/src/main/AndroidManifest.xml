@@ -40,8 +40,6 @@
         <activity android:name=".view.activity.MediaRecorderActivity"/>
         <activity android:name=".view.activity.RecorderActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".view.activity.RecorderActivity1"
-            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
