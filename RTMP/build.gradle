@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 17
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 19
+        minSdkVersion 17
+        targetSdkVersion 25
 
 //        ndk {
 //            moduleName "fdk-aac"
@@ -29,5 +29,5 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:support-v4:25.3.1'
 }

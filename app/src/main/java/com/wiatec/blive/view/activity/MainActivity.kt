@@ -12,10 +12,10 @@ import com.px.kotlin.utils.Logger
 import com.px.kotlin.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
 import com.wiatec.blive.DEFAULT_RTMP_URL
+import com.wiatec.blive.INPUT_URL
 import com.wiatec.blive.KEY_URL
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.FragmentAdapter
-import com.wiatec.blive.model.Constant
 import com.wiatec.blive.utils.WindowUtil
 import com.wiatec.blive.view.fragment.FragmentLive
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,7 +34,7 @@ class MainActivity : BaseActivity (){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            val systemBarTintManager:SystemBarTintManager = SystemBarTintManager(this)
+            val systemBarTintManager = SystemBarTintManager(this)
             systemBarTintManager.isStatusBarTintEnabled = true
             systemBarTintManager.setStatusBarTintResource(R.color.colorAccent)
         }
@@ -60,7 +60,7 @@ class MainActivity : BaseActivity (){
     }
 
     private fun initSlideNavigation() {
-        val drawerToggle:ActionBarDrawerToggle = ActionBarDrawerToggle(this , drawer_layout_main ,
+        val drawerToggle = ActionBarDrawerToggle(this , drawer_layout_main ,
                 toolBarMain , R.string.app_name, R.string.app_name)
         drawer_layout_main.setDrawerListener(drawerToggle)
         drawerToggle.syncState()
@@ -71,12 +71,12 @@ class MainActivity : BaseActivity (){
     }
 
     private fun initFragment() {
-        val fragmentLive: FragmentLive = FragmentLive()
+        val fragmentLive = FragmentLive()
         val fragmentList: MutableList<Fragment> = MutableList(0, {
             return
         })
         fragmentList.add(fragmentLive)
-        val fragmentAdapter: FragmentAdapter = FragmentAdapter(supportFragmentManager ,fragmentList)
+        val fragmentAdapter = FragmentAdapter(supportFragmentManager ,fragmentList)
         viewPager.adapter = fragmentAdapter
     }
 
@@ -97,10 +97,10 @@ class MainActivity : BaseActivity (){
 
     private fun showSettingRtmpUrlDialog (){
         val builder = MaterialDialog.Builder(this)
-        builder.title(Constant.INPUT_URL)
-        val currentUrl:String = SPUtil.get(applicationContext, Constant.KEY_URL, Constant.DEFAULT_URL) as String
-        builder.input(Constant.KEY_URL , currentUrl) { _ , input ->
-            SPUtil.put(applicationContext , Constant.KEY_URL , input.toString())
+        builder.title(INPUT_URL)
+        val currentUrl:String = SPUtil.get(applicationContext, KEY_URL, DEFAULT_RTMP_URL) as String
+        builder.input(KEY_URL , currentUrl) { _ , input ->
+            SPUtil.put(applicationContext , KEY_URL , input.toString())
         }
         builder.show()
     }
