@@ -63,6 +63,7 @@ public class RecorderActivity extends Activity {
     private final int CHANNEL_NUMBER_DEF = 2;
     private static final int REQUEST_CAMERA = 0;
     private static final int REQUEST_AUDIO = 1;
+    private static final int REQUEST_AUTO_FOCUS = 1;
 
     private final String LOG_TAG = "MainActivity";
     private final boolean DEBUG_ENABLE = false;
@@ -382,7 +383,7 @@ public class RecorderActivity extends Activity {
 
     private void Stop() {
         _bStartFlag = false;
-        _AacEncoderThread.interrupt();
+        if(_AacEncoderThread != null) _AacEncoderThread.interrupt();
         _h264EncoderThread.interrupt();
         _AudioRecorder.stop();
         _swEncH264.stop();
@@ -505,12 +506,12 @@ public class RecorderActivity extends Activity {
             // 创建退出对话框
             AlertDialog isExit = new AlertDialog.Builder(this).create();
             // 设置对话框标题
-            isExit.setTitle("系统提示");
+            isExit.setTitle("Notice");
             // 设置对话框消息
-            isExit.setMessage("确定要退出吗");
+            isExit.setMessage("Confirm to exit");
             // 添加选择按钮并注册监听
-            isExit.setButton("确定", listener);
-            isExit.setButton2("取消", listener);
+            isExit.setButton("Confirm", listener);
+            isExit.setButton2("Cancel", listener);
             // 显示对话框
             isExit.show();
 

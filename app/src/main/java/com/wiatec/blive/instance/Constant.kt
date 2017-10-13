@@ -1,4 +1,4 @@
-package com.wiatec.blive
+package com.wiatec.blive.instance
 
 import android.os.Environment
 

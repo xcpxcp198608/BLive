@@ -11,9 +11,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.px.kotlin.utils.Logger
 import com.px.kotlin.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
-import com.wiatec.blive.DEFAULT_RTMP_URL
-import com.wiatec.blive.INPUT_URL
-import com.wiatec.blive.KEY_URL
+import com.wiatec.blive.instance.DEFAULT_RTMP_URL
+import com.wiatec.blive.instance.INPUT_URL
+import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.FragmentAdapter
 import com.wiatec.blive.utils.WindowUtil
@@ -45,15 +45,19 @@ class MainActivity : BaseActivity (){
     }
 
     private fun initToolBar() {
-        toolBarMain.setPadding(0, WindowUtil.getStatusBarHeight(this), 0, 0)
+        var paddingTop = 0
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+            paddingTop = WindowUtil.getStatusBarHeight(this)
+        }
+        toolBarMain.setPadding(0, paddingTop, 0, 0)
         toolBarMain.title = getString(R.string.app_name)
         toolBarMain.setTitleTextColor(Color.WHITE)
         toolBarMain.setNavigationIcon(R.drawable.ic_list_white_36dp)
         toolBarMain.inflateMenu(R.menu.menu_tool_bar)
         toolBarMain.setOnMenuItemClickListener {
             when(it.itemId){
-                R.id.item_about -> showAboutDialog()
-                else -> Logger.d("sf")
+//                R.id.item_about -> showAboutDialog()
+//                else -> Logger.d("sf")
             }
             true
         }
@@ -62,7 +66,7 @@ class MainActivity : BaseActivity (){
     private fun initSlideNavigation() {
         val drawerToggle = ActionBarDrawerToggle(this , drawer_layout_main ,
                 toolBarMain , R.string.app_name, R.string.app_name)
-        drawer_layout_main.setDrawerListener(drawerToggle)
+        drawer_layout_main.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
         fl1.setPadding(0,WindowUtil.getStatusBarHeight(this), 0, 0)
         tvSetting.setOnClickListener { showSettingRtmpUrlDialog() }
@@ -99,8 +103,8 @@ class MainActivity : BaseActivity (){
         val builder = MaterialDialog.Builder(this)
         builder.title(INPUT_URL)
         val currentUrl:String = SPUtil.get(applicationContext, KEY_URL, DEFAULT_RTMP_URL) as String
-        builder.input(KEY_URL , currentUrl) { _ , input ->
-            SPUtil.put(applicationContext , KEY_URL , input.toString())
+        builder.input(KEY_URL, currentUrl) { _, input ->
+            SPUtil.put(applicationContext , KEY_URL, input.toString())
         }
         builder.show()
     }
