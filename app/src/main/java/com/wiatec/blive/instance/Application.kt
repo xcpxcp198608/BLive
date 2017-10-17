@@ -2,24 +2,17 @@ package com.wiatec.blive.instance
 
 import android.app.Application
 import android.content.Context
-import com.px.kotlin.utils.Logger
+import android.support.v4.content.FileProvider
+import com.px.common.utils.CommonApplication
+import com.px.common.utils.Logger
 
 /**
  * application
  */
-class Application: Application() {
-
-    lateinit var context: Context
+class Application: CommonApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        Logger.init("----px----")
-    }
-
-    companion object{
-        fun context(){
-            
-        }
     }
 
 }

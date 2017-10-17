@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/etUsernameSignUp"
+        android:textSize="18sp"
+        android:hint="@string/username"
+        android:drawableStart="@drawable/ic_person_outline_pink_400_24dp"
+        android:textColorHint="@color/colorGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v4.widget.Space
+        android:layout_below="@id/etUsernameSignUp"
+        android:id="@+id/sp1"
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+        android:id="@+id/etPasswordSignUp"
+        android:layout_below="@id/sp1"
+        android:textSize="18sp"
+        android:hint="@string/password"
+        android:drawableStart="@drawable/ic_lock_outline_pink_400_24dp"
+        android:inputType="textPassword"
+        android:textColorHint="@color/colorGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v4.widget.Space
+        android:id="@+id/sp2"
+        android:layout_below="@id/etPasswordSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+        android:id="@+id/etPasswordSignUp1"
+        android:layout_below="@id/sp2"
+        android:textSize="18sp"
+        android:hint="@string/password"
+        android:drawableStart="@drawable/ic_lock_outline_pink_400_24dp"
+        android:inputType="textPassword"
+        android:textColorHint="@color/colorGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v4.widget.Space
+        android:id="@+id/sp3"
+        android:layout_below="@id/etPasswordSignUp1"
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+        android:id="@+id/etEmailSignUp"
+        android:layout_below="@id/sp3"
+        android:textSize="18sp"
+        android:hint="@string/email"
+        android:drawableStart="@drawable/ic_email_pink_400_24dp"
+        android:inputType="textEmailAddress"
+        android:textColorHint="@color/colorGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v4.widget.Space
+        android:id="@+id/sp4"
+        android:layout_below="@id/etEmailSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+        android:id="@+id/etPhoneSignUp"
+        android:layout_below="@id/sp4"
+        android:textSize="18sp"
+        android:hint="@string/phone"
+        android:drawableStart="@drawable/ic_phone_iphone_pink_400_24dp"
+        android:inputType="phone"
+        android:textColorHint="@color/colorGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.v4.widget.Space
+        android:id="@+id/sp5"
+        android:layout_below="@id/etPhoneSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <Button
+        android:id="@+id/btSignUp"
+        android:layout_below="@id/sp5"
+        android:text="@string/signup"
+        android:textColor="@android:color/white"
+        android:background="@drawable/bt_sign_in"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>

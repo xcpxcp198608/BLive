@@ -68,7 +68,7 @@ public class RecorderActivity extends Activity {
     private final String LOG_TAG = "MainActivity";
     private final boolean DEBUG_ENABLE = false;
 
-    private String _rtmpUrl = "rtmp://us3.protv.company:1939/live/BVISION2";
+    private String _rtmpUrl = "rtmp://us3.protv.company:1939/live/BVISION3";
 
     PowerManager.WakeLock _wakeLock;
     private DataOutputStream _outputStream = null;

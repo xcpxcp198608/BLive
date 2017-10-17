@@ -17,7 +17,7 @@ android {
     signingConfigs {
         release {
             storeFile file("/KeyStore/234.jks")
-            storePassword  KEYSTORE_PASSWORD
+            storePassword KEYSTORE_PASSWORD
             keyAlias "234"
             keyPassword KEY_PASSWORD
         }
@@ -70,17 +70,17 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    compile project(':rtmp')
+    compile project(':common')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'org.jetbrains.anko:anko:0.10.0'
-
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.afollestad.material-dialogs:commons:0.9.4.5'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
-    compile project(':rtmp')
-    compile project(':common')
+    testCompile 'junit:junit:4.12'
 }
 repositories {
     mavenCentral()

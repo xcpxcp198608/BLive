@@ -9,4 +9,15 @@
     <string name="ok">OK</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
+    <string name="splash">splash</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="skip">skip</string>
+    <string name="signin">Signin</string>
+    <string name="signup">Signup</string>
+    <string name="email">email</string>
+    <string name="send">Send</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="forgot_password">forgot password?</string>
+    <string name="phone">phone</string>
 </resources>

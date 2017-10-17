@@ -8,6 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">#ffffff</item>
         <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
         <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
     </style>
 
@@ -22,17 +24,5 @@
         <item name="android:dropDownVerticalOffset">3dp</item>
     </style>
 
-    <style name="DialogStyleFullScreen" parent="Animation.AppCompat.Dialog">
-
-    </style>
-
-    <style name="DialogStylePoP" >
-        <item name="android:windowFrame">@null</item><!--边框-->
-        <item name="android:windowIsFloating">true</item><!--是否浮现在activity之上-->
-        <item name="android:windowIsTranslucent">false</item><!--半透明-->
-        <item name="android:windowNoTitle">true</item><!--无标题-->
-        <item name="android:windowBackground">@android:color/transparent</item><!--背景透明-->
-        <item name="android:backgroundDimEnabled">true</item><!--模糊-->
-    </style>
 
 </resources>

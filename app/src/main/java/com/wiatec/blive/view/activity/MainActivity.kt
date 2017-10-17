@@ -6,16 +6,18 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
+import android.view.KeyEvent
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.px.kotlin.utils.Logger
-import com.px.kotlin.utils.SPUtil
+import com.px.common.utils.Logger
+import com.px.common.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
 import com.wiatec.blive.instance.DEFAULT_RTMP_URL
 import com.wiatec.blive.instance.INPUT_URL
 import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.FragmentAdapter
+import com.wiatec.blive.presenter.MainPresenter
 import com.wiatec.blive.utils.WindowUtil
 import com.wiatec.blive.view.fragment.FragmentLive
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,7 +28,9 @@ import kotlinx.android.synthetic.main.tool_bar_main.*
 /**
  * http://128.1.68.58:88/get.php?username=ZHbSkeb6u1&password=X8wSsqgi1J&type=m3u&output=mpegts
  */
-class MainActivity : BaseActivity (){
+class MainActivity : BaseActivity<Main, MainPresenter>(), Main {
+
+    override fun createPresenter(): MainPresenter = MainPresenter(this@MainActivity)
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +49,8 @@ class MainActivity : BaseActivity (){
     }
 
     private fun initToolBar() {
-        var paddingTop = 0
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
-            paddingTop = WindowUtil.getStatusBarHeight(this)
-        }
+        val paddingTop = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT )
+            WindowUtil.getStatusBarHeight(this) else 0
         toolBarMain.setPadding(0, paddingTop, 0, 0)
         toolBarMain.title = getString(R.string.app_name)
         toolBarMain.setTitleTextColor(Color.WHITE)
@@ -56,8 +58,7 @@ class MainActivity : BaseActivity (){
         toolBarMain.inflateMenu(R.menu.menu_tool_bar)
         toolBarMain.setOnMenuItemClickListener {
             when(it.itemId){
-//                R.id.item_about -> showAboutDialog()
-//                else -> Logger.d("sf")
+                R.id.item_about -> showConsentDialog()
             }
             true
         }
@@ -92,21 +93,29 @@ class MainActivity : BaseActivity (){
         }
     }
 
-    private fun showAboutDialog() {
-        val dialog = AlertDialog.Builder(this ,R.style.DialogStyleFullScreen).create()
+    private fun showConsentDialog() {
+        val dialog = AlertDialog.Builder(this).create()
         dialog.show()
         val window = dialog.window
-        window.setContentView(R.layout.dialog_about)
+        window.setContentView(R.layout.dialog_consent)
     }
 
     private fun showSettingRtmpUrlDialog (){
         val builder = MaterialDialog.Builder(this)
         builder.title(INPUT_URL)
-        val currentUrl:String = SPUtil.get(applicationContext, KEY_URL, DEFAULT_RTMP_URL) as String
+        val currentUrl:String = SPUtil.get(KEY_URL, DEFAULT_RTMP_URL) as String
         builder.input(KEY_URL, currentUrl) { _, input ->
-            SPUtil.put(applicationContext , KEY_URL, input.toString())
+            SPUtil.put(KEY_URL, input.toString())
         }
         builder.show()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if(event!!.keyCode == KeyEvent.KEYCODE_BACK){
+
+        }
+
+        return super.onKeyDown(keyCode, event)
     }
 
 }

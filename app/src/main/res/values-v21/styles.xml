@@ -9,6 +9,13 @@
         <item name="android:textColorSecondary">#ffffff</item>
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:actionOverflowMenuStyle">@style/MenuStyle</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
+    </style>
+
+    <style name="DrawerArrowToggle" parent="Base.Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@android:color/white</item>
     </style>
     
     <style name="MenuStyle" parent="@style/Widget.AppCompat.PopupMenu.Overflow">
