@@ -14,10 +14,13 @@
     <string name="skip">skip</string>
     <string name="signin">Signin</string>
     <string name="signup">Signup</string>
+    <string name="signout">Signout</string>
+    <string name="reset">Reset</string>
     <string name="email">email</string>
     <string name="send">Send</string>
-    <string name="username">username</string>
-    <string name="password">password</string>
+    <string name="username">username(6~20)</string>
+    <string name="password">password(6~20)</string>
     <string name="forgot_password">forgot password?</string>
-    <string name="phone">phone</string>
+    <string name="phone">cell phone</string>
+    <string name="icon">icon</string>
 </resources>

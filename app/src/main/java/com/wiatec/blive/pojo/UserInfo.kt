@@ -17,6 +17,11 @@ class UserInfo {
         this.username = username
     }
 
+    constructor(username: String, password: String) {
+        this.username = username
+        this.password = password
+    }
+
     constructor(username: String, password: String, email: String, phone: String) {
         this.username = username
         this.password = password

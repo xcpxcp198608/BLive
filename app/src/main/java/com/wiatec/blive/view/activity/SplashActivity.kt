@@ -11,7 +11,9 @@ import com.px.common.http.Listener.DownloadListener
 import com.px.common.utils.*
 
 import com.wiatec.blive.R
-import com.wiatec.blive.instance.KEY_TOKEN
+import com.wiatec.blive.instance.KEY_AUTH_TOKEN
+import com.wiatec.blive.pojo.ResultInfo
+import com.wiatec.blive.pojo.TokenInfo
 import com.wiatec.blive.pojo.UpgradeInfo
 import com.wiatec.blive.presenter.SplashPresenter
 
@@ -105,11 +107,21 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
     }
 
     private fun checkAuth(){
-        val token = SPUtil.get(KEY_TOKEN, "") as String
+        val token = SPUtil.get(KEY_AUTH_TOKEN, "") as String
         if(TextUtils.isEmpty(token)){
             jumpToAuth()
         }else{
-            jumpToMain()
+            presenter!!.validateToken(token)
+        }
+    }
+
+    override fun validateToken(execute: Boolean, resultInfo: ResultInfo<TokenInfo>?) {
+        if(execute && resultInfo != null){
+            if(resultInfo.code == ResultInfo.CODE_OK){
+                jumpToMain()
+            }else{
+                jumpToAuth()
+            }
         }
     }
 

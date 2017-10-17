@@ -3,6 +3,7 @@ package com.wiatec.blive.presenter
 import com.wiatec.blive.model.AuthProvider
 import com.wiatec.blive.model.LoadListener
 import com.wiatec.blive.pojo.ResultInfo
+import com.wiatec.blive.pojo.TokenInfo
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.view.activity.Auth
 
@@ -27,22 +28,10 @@ class AuthPresenter(val auth: Auth): BasePresenter<Auth>(){
     }
 
     fun signIn(userInfo: UserInfo){
-        authProvider.signIn(userInfo, object: LoadListener<ResultInfo<UserInfo>>{
-            override fun onSuccess(execute: Boolean, t: ResultInfo<UserInfo>?) {
+        authProvider.signIn(userInfo, object: LoadListener<ResultInfo<TokenInfo>>{
+            override fun onSuccess(execute: Boolean, t: ResultInfo<TokenInfo>?) {
                 if(t == null) return
                 auth.signIn(execute, t)
-            }
-
-            override fun onFailure(e: String) {
-            }
-        })
-    }
-
-    fun validate(userInfo: UserInfo){
-        authProvider.validate(userInfo, object: LoadListener<ResultInfo<UserInfo>>{
-            override fun onSuccess(execute: Boolean, t: ResultInfo<UserInfo>?) {
-                if(t == null) return
-                auth.validate(execute, t)
             }
 
             override fun onFailure(e: String) {

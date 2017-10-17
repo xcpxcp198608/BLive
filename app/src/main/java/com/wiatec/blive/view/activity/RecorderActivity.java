@@ -30,8 +30,6 @@ import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -39,7 +37,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.view.KeyEvent;
 import android.app.AlertDialog;
@@ -68,7 +66,7 @@ public class RecorderActivity extends Activity {
     private final String LOG_TAG = "MainActivity";
     private final boolean DEBUG_ENABLE = false;
 
-    private String _rtmpUrl = "rtmp://us3.protv.company:1939/live/BVISION3";
+    private String _rtmpUrl = "rtmp://us3.protv.company:1939/liveChannel/BVISION3";
 
     PowerManager.WakeLock _wakeLock;
     private DataOutputStream _outputStream = null;
@@ -86,7 +84,7 @@ public class RecorderActivity extends Activity {
 
     private int _iRecorderBufferSize = 0;
 
-    private Button _SwitchCameraBtn = null;
+    private ImageButton _SwitchCameraBtn = null;
 
     private boolean _bStartFlag = false;
 
@@ -326,14 +324,13 @@ public class RecorderActivity extends Activity {
                             new String[]{android.Manifest.permission.CAMERA},REQUEST_CAMERA);
 
                 }else {
-                    _mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    _mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                     InitCamera();
                 }
             }else {
-                _mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                _mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
                 InitCamera();
             }
-
         }
 
         @Override
@@ -471,7 +468,7 @@ public class RecorderActivity extends Activity {
         _mSurfaceView.getHolder().addCallback(new SurceCallBack());
         _mSurfaceView.setLayoutParams(layoutParams);
         InitAudioRecord();
-        _SwitchCameraBtn = (Button) findViewById(R.id.SwitchCamerabutton);
+        _SwitchCameraBtn = (ImageButton) findViewById(R.id.SwitchCamerabutton);
         _SwitchCameraBtn.setOnClickListener(_switchCameraOnClickedEvent);
         RtmpStartMessage();//开始推流
     }

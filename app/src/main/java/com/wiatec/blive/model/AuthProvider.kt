@@ -2,6 +2,7 @@ package com.wiatec.blive.model
 
 import com.px.common.utils.Logger
 import com.wiatec.blive.pojo.ResultInfo
+import com.wiatec.blive.pojo.TokenInfo
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.utils.RMaster
 import retrofit2.Call
@@ -27,7 +28,6 @@ class AuthProvider{
                         if(response == null) return
                         val resultInfo = response.body()
                         if(resultInfo != null){
-                            Logger.d(resultInfo.toString())
                             loadListener.onSuccess(true, resultInfo)
                         }else{
                             loadListener.onSuccess(false, null)
@@ -36,20 +36,19 @@ class AuthProvider{
                 })
     }
 
-    fun signIn(userInfo: UserInfo, loadListener: LoadListener<ResultInfo<UserInfo>>){
+    fun signIn(userInfo: UserInfo, loadListener: LoadListener<ResultInfo<TokenInfo>>){
         RMaster.retrofit.create(AuthService::class.java)
                 .signIn(userInfo)
-                .enqueue(object : Callback<ResultInfo<UserInfo>>{
-                    override fun onFailure(call: Call<ResultInfo<UserInfo>>?, t: Throwable?) {
+                .enqueue(object : Callback<ResultInfo<TokenInfo>>{
+                    override fun onFailure(call: Call<ResultInfo<TokenInfo>>?, t: Throwable?) {
                         if (t?.message != null) Logger.d(t.message)
                         loadListener.onSuccess(false, null)
                     }
 
-                    override fun onResponse(call: Call<ResultInfo<UserInfo>>?, response: Response<ResultInfo<UserInfo>>?) {
+                    override fun onResponse(call: Call<ResultInfo<TokenInfo>>?, response: Response<ResultInfo<TokenInfo>>?) {
                         if(response == null) return
                         val resultInfo = response.body()
                         if(resultInfo != null){
-                            Logger.d(resultInfo.toString())
                             loadListener.onSuccess(true, resultInfo)
                         }else{
                             loadListener.onSuccess(false, null)
@@ -93,7 +92,6 @@ class AuthProvider{
                         if(response == null) return
                         val resultInfo = response.body()
                         if(resultInfo != null){
-                            Logger.d(resultInfo.toString())
                             loadListener.onSuccess(true, resultInfo)
                         }else{
                             loadListener.onSuccess(false, null)

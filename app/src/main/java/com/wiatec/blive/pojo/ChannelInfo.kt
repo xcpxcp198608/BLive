@@ -5,10 +5,11 @@ class ChannelInfo {
     var id: Int = 0
     var name: String? = null
     var url: String? = null
+    var icon: String? = null
     var category: String? = null
     var isAvailable: Boolean = false
     /**
-     * 1:default live
+     * 1:default liveChannel
      */
     var type: Int = 0
     var startTime: String? = null
@@ -19,6 +20,7 @@ class ChannelInfo {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
+                ", icon='" + icon + '\'' +
                 ", category='" + category + '\'' +
                 ", available=" + isAvailable +
                 ", type=" + type +

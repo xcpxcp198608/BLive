@@ -8,19 +8,19 @@ class ResultInfo<T> {
     /**
      * status code
      */
-    private var code: Int = 0
+    var code: Int = 0
 
     /**
      * status description
      */
-    private var status: String? = null
+    var status: String? = null
 
     /**
      * custom message
      */
-    private var message: String? = null
+    var message: String? = null
 
-    private var t: T? = null
+    var t: T? = null
 
     /**
      * data

@@ -47,12 +47,12 @@
         app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
-        android:id="@+id/tvExit"
+        android:id="@+id/tvSignOut"
         android:drawableLeft="@drawable/ic_exit_to_app_pink_400_36dp"
         android:background="@drawable/bg_navigation_item"
         android:drawablePadding="5dp"
         android:gravity="center_vertical"
-        android:text="@string/exit"
+        android:text="@string/signout"
         android:textSize="18sp"
         android:padding="16dp"
         android:layout_width="0dp"

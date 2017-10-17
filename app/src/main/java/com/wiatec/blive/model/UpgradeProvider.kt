@@ -14,7 +14,7 @@ import retrofit2.Response
  */
 class UpgradeProvider {
 
-    fun load(loadListener: LoadListener<UpgradeInfo>){
+    fun checkUpgrade(loadListener: LoadListener<UpgradeInfo>){
         RMaster.retrofit
                 .create(UpgradeService::class.java)
                 .get()

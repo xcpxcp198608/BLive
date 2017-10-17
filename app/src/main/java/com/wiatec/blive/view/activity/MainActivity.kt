@@ -7,9 +7,9 @@ import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.KeyEvent
+import android.view.View
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
 import com.wiatec.blive.instance.DEFAULT_RTMP_URL
@@ -17,9 +17,10 @@ import com.wiatec.blive.instance.INPUT_URL
 import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.FragmentAdapter
+import com.wiatec.blive.instance.KEY_AUTH_TOKEN
 import com.wiatec.blive.presenter.MainPresenter
 import com.wiatec.blive.utils.WindowUtil
-import com.wiatec.blive.view.fragment.FragmentLive
+import com.wiatec.blive.view.fragment.FragmentLiveChannel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_layout.*
 import kotlinx.android.synthetic.main.slide_navigation.*
@@ -28,7 +29,7 @@ import kotlinx.android.synthetic.main.tool_bar_main.*
 /**
  * http://128.1.68.58:88/get.php?username=ZHbSkeb6u1&password=X8wSsqgi1J&type=m3u&output=mpegts
  */
-class MainActivity : BaseActivity<Main, MainPresenter>(), Main {
+class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickListener{
 
     override fun createPresenter(): MainPresenter = MainPresenter(this@MainActivity)
 
@@ -45,7 +46,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main {
         initToolBar()
         initSlideNavigation()
         initFragment()
-        initFloatActionButton()
+        initEvent()
     }
 
     private fun initToolBar() {
@@ -70,13 +71,10 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main {
         drawer_layout_main.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
         fl1.setPadding(0,WindowUtil.getStatusBarHeight(this), 0, 0)
-        tvSetting.setOnClickListener { showSettingRtmpUrlDialog() }
-        tvExit.setOnClickListener { Logger.d("exit") }
-        ivPerson.setOnClickListener { Logger.d("person")}
     }
 
     private fun initFragment() {
-        val fragmentLive = FragmentLive()
+        val fragmentLive = FragmentLiveChannel()
         val fragmentList: MutableList<Fragment> = MutableList(0, {
             return
         })
@@ -85,12 +83,11 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main {
         viewPager.adapter = fragmentAdapter
     }
 
-    private fun initFloatActionButton() {
-        btFloatingAction.setOnClickListener {
-            val intent = Intent(this , RecorderActivity::class.java)
-            intent.putExtra(KEY_URL, DEFAULT_RTMP_URL)
-            startActivity(intent)
-        }
+    private fun initEvent(){
+        btFloatingAction.setOnClickListener(this)
+        ivPerson.setOnClickListener(this)
+        tvSetting.setOnClickListener(this)
+        tvSignOut.setOnClickListener(this)
     }
 
     private fun showConsentDialog() {
@@ -110,12 +107,42 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main {
         builder.show()
     }
 
+    override fun onClick(v: View?) {
+        when(v!!.id){
+            R.id.btFloatingAction -> {
+                jumpToRecorder()
+            }
+            R.id.ivPerson -> {
+
+            }
+            R.id.tvSetting -> {
+                showSettingRtmpUrlDialog()
+            }
+            R.id.tvSignOut -> {
+                SPUtil.put(KEY_AUTH_TOKEN, "")
+                jumpToAuth()
+            }
+        }
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if(event!!.keyCode == KeyEvent.KEYCODE_BACK){
 
         }
 
         return super.onKeyDown(keyCode, event)
+    }
+
+    private fun jumpToRecorder(){
+        val intent = Intent(this , RecorderActivity::class.java)
+        intent.putExtra(KEY_URL, DEFAULT_RTMP_URL)
+        startActivity(intent)
+    }
+
+    private fun jumpToAuth(){
+        val intent = Intent(this , AuthActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }
