@@ -134,7 +134,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     }
 
     private fun jumpToRecorder(){
-        val intent = Intent(this , Recorder1Activity::class.java)
+        val intent = Intent(this , RecorderActivity::class.java)
         intent.putExtra(KEY_URL, DEFAULT_RTMP_URL)
         startActivity(intent)
     }
