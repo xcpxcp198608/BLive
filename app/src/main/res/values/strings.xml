@@ -23,4 +23,6 @@
     <string name="forgot_password">forgot password?</string>
     <string name="phone">cell phone</string>
     <string name="icon">icon</string>
+    <string name="notice">Notice</string>
+    <string name="stop_publish">Stop publish and exit?</string>
 </resources>

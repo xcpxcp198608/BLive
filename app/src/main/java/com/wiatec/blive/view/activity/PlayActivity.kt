@@ -2,6 +2,7 @@ package com.wiatec.blive.view.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import com.px.common.utils.Logger
 
@@ -23,7 +24,12 @@ class PlayActivity : AppCompatActivity() {
         Logger.d(url)
         videoView.setVideoPath(url)
         videoView.setOnPreparedListener {
+            progressBar.visibility = View.GONE
             videoView.start()
+        }
+        videoView.setOnErrorListener { mp, what, extra ->
+            progressBar.visibility = View.GONE
+            false
         }
     }
 

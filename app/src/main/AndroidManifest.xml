@@ -39,6 +39,9 @@
             android:name=".view.activity.RecorderActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".view.activity.Recorder1Activity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.activity.MainActivity"
             android:screenOrientation="portrait" />
 

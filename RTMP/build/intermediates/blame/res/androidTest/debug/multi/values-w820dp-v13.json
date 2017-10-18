@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "/Users/xuchengpeng/AndroidStudioProjects/BLive/rtmp/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-w820dp-v13/values-w820dp-v13.xml",
+        "outputFile": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-w820dp-v13/values-w820dp-v13.xml",
         "map": [
             {
                 "to": {
@@ -11,7 +11,7 @@
                     "endOffset": 108
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/rtmp/build/intermediates/bundles/debug/res/values-w820dp-v13/values-w820dp-v13.xml",
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values-w820dp-v13/values-w820dp-v13.xml",
                     "position": {
                         "startLine": 2,
                         "startColumn": 4,

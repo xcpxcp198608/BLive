@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/Users/xuchengpeng/AndroidStudioProjects/BLive/rtmp/src/main/shaders"/></dataSet><dataSet config="release"><source path="/Users/xuchengpeng/AndroidStudioProjects/BLive/rtmp/src/release/shaders"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/src/main/shaders"/></dataSet><dataSet config="release"><source path="/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/src/release/shaders"/></dataSet></merger>
