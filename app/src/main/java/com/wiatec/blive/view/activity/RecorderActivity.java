@@ -18,7 +18,7 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -28,13 +28,13 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.alex.livertmppushsdk.FdkAacEncode;
 import com.alex.livertmppushsdk.RtmpSessionManager;
 import com.alex.livertmppushsdk.SWVideoEncoder;
+import com.px.common.utils.Logger;
 import com.wiatec.blive.R;
 
 import java.io.DataOutputStream;
@@ -48,39 +48,38 @@ import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class RecorderActivity extends Activity {
+public class RecorderActivity extends Activity implements OnClickListener {
 
-    private final String LOG_TAG = "Recorder";
-    private final static int ID_RTMP_PUSH_START = 100;
-    private final static int ID_RTMP_PUSH_EXIT = 101;
-    private final int WIDTH_DEF = 480;
-    private final int HEIGHT_DEF = 640;
-    private final int FRAMERATE_DEF = 20;
-    private final int BITRATE_DEF = 800 * 1000;
-    private final int SAMPLE_RATE_DEF = 22050;
-    private final int CHANNEL_NUMBER_DEF = 2;
+    private static final int ID_RTMP_PUSH_START = 100;
+    private static final int ID_RTMP_PUSH_EXIT = 101;
+    private static final int WIDTH = 360;
+    private static final int HEIGHT = 640;
+    private static final int FRAME_RATE_DEF = 20;
+    private static final int BITRATE_DEF = 800 * 1000;
+    private static final int SAMPLE_RATE_DEF = 22050;
+    private static final int CHANNEL_NUMBER_DEF = 2;
     private static final int REQUEST_CAMERA = 0;
     private static final int REQUEST_AUDIO = 1;
-    private final boolean DEBUG_ENABLE = false;
+    private static final boolean DEBUG_ENABLE = false;
+    private static final String DEFAULT_PUSH_URL = "rtmp://us3.protv.company:1939/live/BVISION4";
 
-    private String rtmpUrl = "rtmp://us3.protv.company:1939/live/BVISION4";
+    private String pushUrl;
     private PowerManager.WakeLock wakeLock;
     private DataOutputStream outputStream = null;
     private AudioRecord audioRecorder = null;
     private byte[] recorderBuffer = null;
-    private FdkAacEncode fdkaacEnc = null;
-    private int fdkaacHandle = 0;
-    public SurfaceView surfaceView = null;
+    private FdkAacEncode fdkAacEnc = null;
+    private int fdkAacHandle = 0;
     private Camera mCamera = null;
-    private boolean isFront = true;
+    private SurfaceView surfaceView = null;
     private SWVideoEncoder swEncH264 = null;
+    private boolean isFront = false;
+    private boolean isHorizantal = false;
+    private boolean isPushing = false;
     private int degrees = 0;
-    private int recorderBufferSize = 0;
-    private ImageButton ibtSwitchCamera = null;
-    private boolean startFlag = false;
     private int cameraCodecType = android.graphics.ImageFormat.NV21;
-    private byte[] yuvNV21 = new byte[WIDTH_DEF * HEIGHT_DEF * 3 / 2];
-    private byte[] yuvEdit = new byte[WIDTH_DEF * HEIGHT_DEF * 3 / 2];
+    private byte[] yuvNV21 = new byte[WIDTH * HEIGHT * 3 / 2];
+    private byte[] yuvEdit = new byte[WIDTH * HEIGHT * 3 / 2];
     private RtmpSessionManager rtmpSessionMgr = null;
     private Queue<byte[]> yuvQueue = new LinkedList<>();
     private Lock yuvQueueLock = new ReentrantLock();
@@ -97,7 +96,14 @@ public class RecorderActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorder);
         wakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE)).
-                newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+                newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "recorder");
+        pushUrl = getIntent().getStringExtra("url");
+        if(TextUtils.isEmpty(pushUrl)) pushUrl = DEFAULT_PUSH_URL;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         initAll();
     }
 
@@ -111,38 +117,44 @@ public class RecorderActivity extends Activity {
         wakeLock.release();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopPush();
+    }
+
     private void initAll() {
-        WindowManager wm = this.getWindowManager();
-        int width = wm.getDefaultDisplay().getWidth();
-        int height = wm.getDefaultDisplay().getHeight();
-        int iNewWidth = (int) (height * 3.0 / 4.0);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT);
-        int iPos = width - iNewWidth;
-        layoutParams.setMargins(iPos, 0, 0, 0);
-        surfaceView = (SurfaceView) this.findViewById(R.id.surfaceViewEx);
-        surfaceView.getHolder().setFixedSize(HEIGHT_DEF, WIDTH_DEF);
+        ImageButton ibtSwitchCamera = (ImageButton) findViewById(R.id.ibtSwitchCamera);
+        ibtSwitchCamera.setOnClickListener(this);
+//        WindowManager wm = this.getWindowManager();
+//        int width = wm.getDefaultDisplay().getWidth();
+//        int height = wm.getDefaultDisplay().getHeight();
+//        int iNewWidth = (int) (height * 3.0 / 4.0);
+//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+//                RelativeLayout.LayoutParams.MATCH_PARENT);
+//        int iPos = width - iNewWidth;
+//        layoutParams.setMargins(iPos, 0, 0, 0);
+        surfaceView = (SurfaceView) this.findViewById(R.id.surfaceView);
+        surfaceView.getHolder().setFixedSize(HEIGHT, WIDTH);
         surfaceView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         surfaceView.getHolder().setKeepScreenOn(true);
         surfaceView.getHolder().addCallback(new SurfaceCallBack());
-        surfaceView.setLayoutParams(layoutParams);
+//        surfaceView.setLayoutParams(layoutParams);
         initAudioRecord();
-        ibtSwitchCamera = (ImageButton) findViewById(R.id.SwitchCamerabutton);
-        ibtSwitchCamera.setOnClickListener(_switchCameraOnClickedEvent);
-        rtmpStartMessage();//开始推流
+//        rtmpStartMessage();
+        startPush();
     }
 
     private void initAudioRecord() {
-        recorderBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_DEF,
+        int recorderBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_DEF,
                 AudioFormat.CHANNEL_CONFIGURATION_STEREO,
                 AudioFormat.ENCODING_PCM_16BIT);
         audioRecorder = new AudioRecord(AudioSource.MIC,
                 SAMPLE_RATE_DEF, AudioFormat.CHANNEL_CONFIGURATION_STEREO,
                 AudioFormat.ENCODING_PCM_16BIT, recorderBufferSize);
         recorderBuffer = new byte[recorderBufferSize];
-
-        fdkaacEnc = new FdkAacEncode();
-        fdkaacHandle = fdkaacEnc.FdkAacInit(SAMPLE_RATE_DEF, CHANNEL_NUMBER_DEF);
+        fdkAacEnc = new FdkAacEncode();
+        fdkAacHandle = fdkAacEnc.FdkAacInit(SAMPLE_RATE_DEF, CHANNEL_NUMBER_DEF);
     }
 
     private void rtmpStartMessage() {
@@ -158,14 +170,14 @@ public class RecorderActivity extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case ID_RTMP_PUSH_START: {
-                    start();
+                    startPush();
                     break;
                 }
             }
         }
     };
 
-    private void start() {
+    private void startPush() {
         if (DEBUG_ENABLE) {
             File saveDir = Environment.getExternalStorageDirectory();
             String strFilename = saveDir + "/aaa.h264";
@@ -176,18 +188,17 @@ public class RecorderActivity extends Activity {
             }
         }
         rtmpSessionMgr = new RtmpSessionManager();
-        rtmpSessionMgr.Start(rtmpUrl);
+        rtmpSessionMgr.Start(pushUrl);
         int iFormat = cameraCodecType;
-        swEncH264 = new SWVideoEncoder(WIDTH_DEF, HEIGHT_DEF, FRAMERATE_DEF, BITRATE_DEF);
+        swEncH264 = new SWVideoEncoder(WIDTH, HEIGHT, FRAME_RATE_DEF, BITRATE_DEF);
         swEncH264.start(iFormat);
-        startFlag = true;
+        isPushing = true;
         h264EncoderThread = new Thread(h264Runnable);
         h264EncoderThread.setPriority(Thread.MAX_PRIORITY);
         h264EncoderThread.start();
         if (Build.VERSION.SDK_INT>22){
             if (ContextCompat.checkSelfPermission(RecorderActivity.this,
                     Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED){
-                //先判断有没有权限 ，没有就在这里进行权限的申请
                 ActivityCompat.requestPermissions(RecorderActivity.this,
                         new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_AUDIO);
             }else {
@@ -204,8 +215,8 @@ public class RecorderActivity extends Activity {
         }
     }
 
-    private void stop() {
-        startFlag = false;
+    private void stopPush() {
+        isPushing = false;
         if(aacEncoderThread != null) aacEncoderThread.interrupt();
         h264EncoderThread.interrupt();
         audioRecorder.stop();
@@ -243,7 +254,7 @@ public class RecorderActivity extends Activity {
     private int getDisplayOrientation(int degrees, int cameraId) {
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraId, info);
-        int result = 0;
+        int result;
         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             result = (info.orientation + degrees) % 360;
             result = (360 - result) % 360;
@@ -253,24 +264,24 @@ public class RecorderActivity extends Activity {
         return result;
     }
 
-    private Camera.PreviewCallback _previewCallback = new Camera.PreviewCallback() {
+    private Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
 
         @Override
         public void onPreviewFrame(byte[] YUV, Camera currentCamera) {
-            if (!startFlag) {
+            if (!isPushing) {
                 return;
             }
             byte[] yuv420 = null;
             if (cameraCodecType == android.graphics.ImageFormat.YV12) {
                 yuv420 = new byte[YUV.length];
-                swEncH264.swapYV12toI420_Ex(YUV, yuv420, HEIGHT_DEF, WIDTH_DEF);
+                swEncH264.swapYV12toI420_Ex(YUV, yuv420, HEIGHT, WIDTH);
             } else if (cameraCodecType == android.graphics.ImageFormat.NV21) {
-                yuv420 = swEncH264.swapNV21toI420(YUV, HEIGHT_DEF, WIDTH_DEF);
+                yuv420 = swEncH264.swapNV21toI420(YUV, HEIGHT, WIDTH);
             }
             if (yuv420 == null) {
                 return;
             }
-            if (!startFlag) {
+            if (!isPushing) {
                 return;
             }
             yuvQueueLock.lock();
@@ -284,19 +295,17 @@ public class RecorderActivity extends Activity {
 
     public void initCamera() {
         Camera.Parameters p = mCamera.getParameters();
-        Size prevewSize = p.getPreviewSize();
-        Log.i(LOG_TAG, "Original Width:" + prevewSize.width + ", height:" + prevewSize.height);
+        Size previewSize = p.getPreviewSize();
+        Logger.d("Original Width:" + previewSize.width + ", height:" + previewSize.height);
         List<Size> PreviewSizeList = p.getSupportedPreviewSizes();
         List<Integer> PreviewFormats = p.getSupportedPreviewFormats();
-        Log.i(LOG_TAG, "Listing all supported icon sizes");
         for (Size size : PreviewSizeList) {
-            Log.i(LOG_TAG, "  w: " + size.width + ", h: " + size.height);
+            Logger.d("  w: " + size.width + ", h: " + size.height);
         }
-        Log.i(LOG_TAG, "Listing all supported icon formats");
         Integer iNV21Flag = 0;
         Integer iYV12Flag = 0;
         for (Integer yuvFormat : PreviewFormats) {
-            Log.i(LOG_TAG, "icon formats:" + yuvFormat);
+            Logger.d("icon formats:" + yuvFormat);
             if (yuvFormat == android.graphics.ImageFormat.YV12) {
                 iYV12Flag = android.graphics.ImageFormat.YV12;
             }
@@ -309,24 +318,46 @@ public class RecorderActivity extends Activity {
         } else if (iYV12Flag != 0) {
             cameraCodecType = iYV12Flag;
         }
-        p.setPreviewSize(HEIGHT_DEF, WIDTH_DEF);
+        p.setPreviewSize(HEIGHT, WIDTH);
         p.setPreviewFormat(cameraCodecType);
-        p.setPreviewFrameRate(FRAMERATE_DEF);
-
-        mCamera.setDisplayOrientation(degrees);
-        p.setRotation(degrees);
-        mCamera.setPreviewCallback(_previewCallback);
-        mCamera.setParameters(p);
+        p.setPreviewFrameRate(FRAME_RATE_DEF);
         try {
+            mCamera.setDisplayOrientation(degrees);
+            p.setRotation(degrees);
+            mCamera.setPreviewCallback(previewCallback);
+            mCamera.setParameters(p);
             mCamera.setPreviewDisplay(surfaceView.getHolder());
+            mCamera.cancelAutoFocus();
+            mCamera.startPreview();
         } catch (Exception e) {
-            return;
+            Logger.d(e.getMessage());
         }
-        mCamera.cancelAutoFocus();//只有加上了这一句，才会自动对焦。
-        mCamera.startPreview();
     }
 
     private final class SurfaceCallBack implements SurfaceHolder.Callback {
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            degrees = getDisplayOrientation(getDisplayRotation(), 0);
+            if (mCamera != null) {
+                initCamera();
+                return;
+            }
+            if (Build.VERSION.SDK_INT>22){
+                if (ContextCompat.checkSelfPermission(RecorderActivity.this,
+                        Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(RecorderActivity.this,
+                            new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA);
+                }else {
+                    mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+                    initCamera();
+                }
+            }else {
+                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+                initCamera();
+            }
+        }
+
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             mCamera.autoFocus(new Camera.AutoFocusCallback() {
@@ -341,54 +372,45 @@ public class RecorderActivity extends Activity {
         }
 
         @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            degrees = getDisplayOrientation(getDisplayRotation(), 0);
-            if (mCamera != null) {
-                initCamera();
-                return;
-            }
-            if (Build.VERSION.SDK_INT>22){
-                if (ContextCompat.checkSelfPermission(RecorderActivity.this,
-                        Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
-                    //先判断有没有权限 ，没有就在这里进行权限的申请
-                    ActivityCompat.requestPermissions(RecorderActivity.this,
-                            new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA);
-
-                }else {
-                    mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-                    initCamera();
-                }
-            }else {
-                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-                initCamera();
-            }
-        }
-
-        @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
 
         }
     }
 
-    private OnClickListener _switchCameraOnClickedEvent = new OnClickListener() {
-        @Override
-        public void onClick(View arg0) {
-            if (mCamera == null) {
-                return;
-            }
-            mCamera.setPreviewCallback(null);
-            mCamera.stopPreview();
-            mCamera.release();
-            mCamera = null;
-            if (isFront) {
-                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            } else {
-                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
-            }
-            isFront = !isFront;
-            initCamera();
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ibtSwitchCamera:
+                switchCamera();
+                break;
         }
-    };
+    }
+
+    private void switchCamera(){
+        if (mCamera == null) return;
+        mCamera.setPreviewCallback(null);
+        mCamera.stopPreview();
+        mCamera.release();
+        mCamera = null;
+        mCamera = isFront ? Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK):
+                Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+        isFront = !isFront;
+        initCamera();
+    }
+
+    private void releaseCamera(){
+        if (mCamera != null) {
+            try {
+                mCamera.setPreviewCallback(null);
+                mCamera.setPreviewDisplay(null);
+                mCamera.stopPreview();
+                mCamera.release();
+                mCamera = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -406,20 +428,8 @@ public class RecorderActivity extends Activity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (mCamera != null) {
-                            try {
-                                mCamera.setPreviewCallback(null);
-                                mCamera.setPreviewDisplay(null);
-                                mCamera.stopPreview();
-                                mCamera.release();
-                                mCamera = null;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (startFlag) {
-                            stop();
-                        }
+                        releaseCamera();
+                        if (isPushing) stopPush();
                         finish();
                     }
                 })
@@ -429,22 +439,22 @@ public class RecorderActivity extends Activity {
     private Runnable h264Runnable = new Runnable() {
         @Override
         public void run() {
-            while (!h264EncoderThread.interrupted() && startFlag) {
+            while (!h264EncoderThread.interrupted() && isPushing) {
                 int iSize = yuvQueue.size();
                 if (iSize > 0) {
                     yuvQueueLock.lock();
                     byte[] yuvData = yuvQueue.poll();
                     if (iSize > 9) {
-                        Log.i(LOG_TAG, "###YUV Queue len=" + yuvQueue.size() + ", YUV length=" + yuvData.length);
+                        Logger.d("###YUV Queue len=" + yuvQueue.size() + ", YUV length=" + yuvData.length);
                     }
                     yuvQueueLock.unlock();
                     if (yuvData == null) {
                         continue;
                     }
                     if (isFront) {
-                        yuvEdit = swEncH264.YUV420pRotate270(yuvData, HEIGHT_DEF, WIDTH_DEF);
+                        yuvEdit = swEncH264.YUV420pRotate270(yuvData, HEIGHT, WIDTH);
                     } else {
-                        yuvEdit = swEncH264.YUV420pRotate90(yuvData, HEIGHT_DEF, WIDTH_DEF);
+                        yuvEdit = swEncH264.YUV420pRotate90(yuvData, HEIGHT, WIDTH);
                     }
                     byte[] h264Data = swEncH264.EncoderH264(yuvEdit);
                     if (h264Data != null) {
@@ -486,11 +496,11 @@ public class RecorderActivity extends Activity {
 
             long lSleepTime = SAMPLE_RATE_DEF * 16 * 2 / recorderBuffer.length;
 
-            while (!aacEncoderThread.interrupted() && startFlag) {
+            while (!aacEncoderThread.interrupted() && isPushing) {
                 int iPCMLen = audioRecorder.read(recorderBuffer, 0, recorderBuffer.length); // Fill buffer
                 if ((iPCMLen != audioRecorder.ERROR_BAD_VALUE) && (iPCMLen != 0)) {
-                    if (fdkaacHandle != 0) {
-                        byte[] aacBuffer = fdkaacEnc.FdkAacEncode(fdkaacHandle, recorderBuffer);
+                    if (fdkAacHandle != 0) {
+                        byte[] aacBuffer = fdkAacEnc.FdkAacEncode(fdkAacHandle, recorderBuffer);
                         if (aacBuffer != null) {
                             rtmpSessionMgr.InsertAudioData(aacBuffer);
                             if (DEBUG_ENABLE) {
@@ -503,7 +513,7 @@ public class RecorderActivity extends Activity {
                         }
                     }
                 } else {
-                    Log.i(LOG_TAG, "######fail to get PCM data");
+                    Logger.d("######fail to get PCM data");
                 }
                 try {
                     Thread.sleep(lSleepTime / 10);
@@ -511,7 +521,7 @@ public class RecorderActivity extends Activity {
                     e.printStackTrace();
                 }
             }
-            Log.i(LOG_TAG, "AAC Encoder Thread ended ......");
+            Logger.d("AAC Encoder Thread ended ......");
         }
     };
 }

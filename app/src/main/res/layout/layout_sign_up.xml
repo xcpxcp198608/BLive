@@ -94,7 +94,7 @@
         android:layout_below="@id/sp5"
         android:text="@string/signup"
         android:textColor="@android:color/white"
-        android:background="@drawable/bt_sign_in"
+        android:background="@drawable/bg_bt_auth"
         android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

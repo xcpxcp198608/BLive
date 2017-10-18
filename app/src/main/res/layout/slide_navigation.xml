@@ -32,7 +32,7 @@
     <TextView
         android:id="@+id/tvSetting"
         android:drawableLeft="@drawable/ic_settings_pink_400_36dp"
-        android:background="@drawable/bg_navigation_item"
+        android:background="@drawable/bg_item_navigation"
         android:drawablePadding="5dp"
         android:gravity="center_vertical"
         android:text="@string/settings"
@@ -49,7 +49,7 @@
     <TextView
         android:id="@+id/tvSignOut"
         android:drawableLeft="@drawable/ic_exit_to_app_pink_400_36dp"
-        android:background="@drawable/bg_navigation_item"
+        android:background="@drawable/bg_item_navigation"
         android:drawablePadding="5dp"
         android:gravity="center_vertical"
         android:text="@string/signout"

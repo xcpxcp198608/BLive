@@ -103,7 +103,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 if(userInfo != null) {
                     presenter!!.signUp(userInfo)
                     btSignUp.isEnabled = false
-                    btSignUp.setBackgroundResource(R.drawable.bt_sign_in_disabled)
+                    btSignUp.setBackgroundResource(R.drawable.bg_bt_auth_disabled)
                     progressBarSignUp.visibility = View.VISIBLE
                 }
             }
@@ -112,7 +112,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 if(userInfo != null) {
                     presenter!!.signIn(userInfo)
                     btSignIn.isEnabled = false
-                    btSignIn.setBackgroundResource(R.drawable.bt_sign_in_disabled)
+                    btSignIn.setBackgroundResource(R.drawable.bg_bt_auth_disabled)
                     progressBarSignIn.visibility = View.VISIBLE
                 }
             }
@@ -121,7 +121,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 if(userInfo != null) {
                     presenter!!.resetPassword(userInfo)
                     btReset.isEnabled = false
-                    btReset.setBackgroundResource(R.drawable.bt_sign_in_disabled)
+                    btReset.setBackgroundResource(R.drawable.bg_bt_auth_disabled)
                     progressBarReset.visibility = View.VISIBLE
                 }
             }
@@ -238,7 +238,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     override fun signUp(execute: Boolean, resultInfo: ResultInfo<UserInfo>?) {
         progressBarSignUp.visibility = View.GONE
         btSignUp.isEnabled = true
-        btSignUp.setBackgroundResource(R.drawable.bt_sign_in)
+        btSignUp.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null){
             Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
@@ -258,7 +258,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     override fun signIn(execute: Boolean, resultInfo: ResultInfo<TokenInfo>?) {
         progressBarSignIn.visibility = View.GONE
         btSignIn.isEnabled = true
-        btSignIn.setBackgroundResource(R.drawable.bt_sign_in)
+        btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null){
             Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
@@ -281,7 +281,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     override fun resetPassword(execute: Boolean, resultInfo: ResultInfo<UserInfo>?) {
         progressBarReset.visibility = View.GONE
         btReset.isEnabled = true
-        btReset.setBackgroundResource(R.drawable.bt_sign_in)
+        btReset.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null){
             Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
