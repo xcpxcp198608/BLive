@@ -9,7 +9,7 @@ class UserInfo {
     var phone: String? = null
     var isStatus: Boolean = false
     var registerTime: String? = null
-    var channelInfoList: List<ChannelInfo>? = null
+    var channelInfo: ChannelInfo? = null
 
     constructor() {}
 
@@ -38,7 +38,7 @@ class UserInfo {
                 ", phone='" + phone + '\'' +
                 ", status=" + isStatus +
                 ", registerTime='" + registerTime + '\'' +
-                ", channelInfoList=" + channelInfoList +
+                ", channelInfo=" + channelInfo +
                 '}'
     }
 }

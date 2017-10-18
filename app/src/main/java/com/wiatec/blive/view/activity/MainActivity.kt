@@ -116,7 +116,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
 
             }
             R.id.tvSetting -> {
-                showSettingRtmpUrlDialog()
+//                showSettingRtmpUrlDialog()
             }
             R.id.tvSignOut -> {
                 SPUtil.put(KEY_AUTH_TOKEN, "")

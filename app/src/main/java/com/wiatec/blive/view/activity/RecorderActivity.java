@@ -257,15 +257,15 @@ public class RecorderActivity extends Activity {
         Log.i(LOG_TAG, "Original Width:" + prevewSize.width + ", height:" + prevewSize.height);
         List<Size> PreviewSizeList = p.getSupportedPreviewSizes();
         List<Integer> PreviewFormats = p.getSupportedPreviewFormats();
-        Log.i(LOG_TAG, "Listing all supported preview sizes");
+        Log.i(LOG_TAG, "Listing all supported icon sizes");
         for (Camera.Size size : PreviewSizeList) {
             Log.i(LOG_TAG, "  w: " + size.width + ", h: " + size.height);
         }
-        Log.i(LOG_TAG, "Listing all supported preview formats");
+        Log.i(LOG_TAG, "Listing all supported icon formats");
         Integer iNV21Flag = 0;
         Integer iYV12Flag = 0;
         for (Integer yuvFormat : PreviewFormats) {
-            Log.i(LOG_TAG, "preview formats:" + yuvFormat);
+            Log.i(LOG_TAG, "icon formats:" + yuvFormat);
             if (yuvFormat == android.graphics.ImageFormat.YV12) {
                 iYV12Flag = android.graphics.ImageFormat.YV12;
             }
