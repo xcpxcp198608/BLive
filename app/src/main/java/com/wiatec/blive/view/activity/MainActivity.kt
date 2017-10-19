@@ -120,8 +120,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.btFloatingAction -> {
-//                applyPermission()
-                jumpToPush()
+                applyPermission()
             }
             R.id.ivPerson -> {
 
