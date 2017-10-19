@@ -5,7 +5,7 @@ int id Startbutton 0x7f080002
 int id Stopbutton 0x7f080003
 int id action_settings 0x7f080004
 int id cameraRelative 0x7f080000
-int id surfaceViewEx 0x7f080001
+int id surfaceView 0x7f080001
 int layout activity_main 0x7f030000
 int menu main 0x7f070000
 int string Startbutton 0x7f060000

@@ -19,7 +19,7 @@ public final class R {
         public static final int Stopbutton = 0x7f080003;
         public static final int action_settings = 0x7f080004;
         public static final int cameraRelative = 0x7f080000;
-        public static final int surfaceViewEx = 0x7f080001;
+        public static final int surfaceView = 0x7f080001;
     }
     public static final class layout {
         public static final int activity_main = 0x7f030000;

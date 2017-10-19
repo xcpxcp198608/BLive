@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/BLive.iml" filepath="$PROJECT_DIR$/BLive.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/push/push.iml" filepath="$PROJECT_DIR$/push/push.iml" />
       <module fileurl="file://$PROJECT_DIR$/RTMP/rtmp.iml" filepath="$PROJECT_DIR$/RTMP/rtmp.iml" />
     </modules>
   </component>

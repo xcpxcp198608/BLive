@@ -11,14 +11,7 @@
                     "endOffset": 107
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
-                    "position": {
-                        "startLine": 2,
-                        "startColumn": 4,
-                        "startOffset": 55,
-                        "endColumn": 56,
-                        "endOffset": 107
-                    }
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml"
                 }
             },
             {
@@ -30,14 +23,7 @@
                     "endOffset": 162
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
-                    "position": {
-                        "startLine": 3,
-                        "startColumn": 4,
-                        "startOffset": 112,
-                        "endColumn": 54,
-                        "endOffset": 162
-                    }
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml"
                 }
             },
             {
@@ -45,8 +31,8 @@
                     "startLine": 4,
                     "startColumn": 4,
                     "startOffset": 167,
-                    "endColumn": 42,
-                    "endOffset": 205
+                    "endColumn": 45,
+                    "endOffset": 208
                 },
                 "from": {
                     "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
@@ -54,8 +40,8 @@
                         "startLine": 4,
                         "startColumn": 4,
                         "startOffset": 167,
-                        "endColumn": 42,
-                        "endOffset": 205
+                        "endColumn": 45,
+                        "endOffset": 208
                     }
                 }
             },
@@ -63,18 +49,18 @@
                 "to": {
                     "startLine": 5,
                     "startColumn": 4,
-                    "startOffset": 210,
-                    "endColumn": 41,
-                    "endOffset": 247
+                    "startOffset": 213,
+                    "endColumn": 43,
+                    "endOffset": 252
                 },
                 "from": {
                     "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 5,
                         "startColumn": 4,
-                        "startOffset": 210,
-                        "endColumn": 41,
-                        "endOffset": 247
+                        "startOffset": 213,
+                        "endColumn": 43,
+                        "endOffset": 252
                     }
                 }
             },
@@ -82,18 +68,18 @@
                 "to": {
                     "startLine": 6,
                     "startColumn": 4,
-                    "startOffset": 252,
-                    "endColumn": 43,
-                    "endOffset": 291
+                    "startOffset": 257,
+                    "endColumn": 47,
+                    "endOffset": 300
                 },
                 "from": {
                     "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 6,
                         "startColumn": 4,
-                        "startOffset": 252,
-                        "endColumn": 43,
-                        "endOffset": 291
+                        "startOffset": 257,
+                        "endColumn": 47,
+                        "endOffset": 300
                     }
                 }
             },
@@ -101,99 +87,62 @@
                 "to": {
                     "startLine": 7,
                     "startColumn": 4,
-                    "startOffset": 296,
+                    "startOffset": 305,
                     "endColumn": 52,
-                    "endOffset": 344
+                    "endOffset": 353
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
-                    "position": {
-                        "startLine": 7,
-                        "startColumn": 4,
-                        "startOffset": 296,
-                        "endColumn": 52,
-                        "endOffset": 344
-                    }
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml"
                 }
             },
             {
                 "to": {
                     "startLine": 8,
                     "startColumn": 4,
-                    "startOffset": 349,
+                    "startOffset": 358,
                     "endColumn": 52,
-                    "endOffset": 397
+                    "endOffset": 406
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
-                    "position": {
-                        "startLine": 8,
-                        "startColumn": 4,
-                        "startOffset": 349,
-                        "endColumn": 52,
-                        "endOffset": 397
-                    }
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml"
                 }
             },
             {
                 "to": {
                     "startLine": 9,
                     "startColumn": 4,
-                    "startOffset": 402,
+                    "startOffset": 411,
                     "endColumn": 52,
-                    "endOffset": 450
+                    "endOffset": 459
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
-                    "position": {
-                        "startLine": 9,
-                        "startColumn": 4,
-                        "startOffset": 402,
-                        "endColumn": 52,
-                        "endOffset": 450
-                    }
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml"
                 }
             },
             {
                 "to": {
                     "startLine": 10,
                     "startColumn": 4,
-                    "startOffset": 455,
-                    "endLine": 16,
+                    "startOffset": 464,
+                    "endLine": 12,
                     "endColumn": 12,
-                    "endOffset": 741
+                    "endOffset": 542
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
-                    "position": {
-                        "startLine": 10,
-                        "startColumn": 4,
-                        "startOffset": 455,
-                        "endLine": 16,
-                        "endColumn": 12,
-                        "endOffset": 741
-                    }
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml"
                 }
             },
             {
                 "to": {
-                    "startLine": 17,
+                    "startLine": 13,
                     "startColumn": 4,
-                    "startOffset": 746,
-                    "endLine": 19,
+                    "startOffset": 547,
+                    "endLine": 15,
                     "endColumn": 12,
-                    "endOffset": 901
+                    "endOffset": 614
                 },
                 "from": {
-                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml",
-                    "position": {
-                        "startLine": 17,
-                        "startColumn": 4,
-                        "startOffset": 746,
-                        "endLine": 19,
-                        "endColumn": 12,
-                        "endOffset": 901
-                    }
+                    "file": "/Users/xuchengpeng/AndroidStudioProjects/BLive/RTMP/build/intermediates/bundles/debug/res/values/values.xml"
                 }
             }
         ]

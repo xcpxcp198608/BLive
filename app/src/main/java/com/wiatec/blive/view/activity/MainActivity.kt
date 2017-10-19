@@ -6,9 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.KeyEvent
 import android.view.View
@@ -17,7 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.px.common.utils.EmojiToast
 import com.px.common.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
-import com.wiatec.blive.instance.DEFAULT_RTMP_URL
+import com.wiatec.blive.instance.DEFAULT_PUSH_URL
 import com.wiatec.blive.instance.INPUT_URL
 import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.R
@@ -112,7 +110,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     private fun showSettingRtmpUrlDialog (){
         val builder = MaterialDialog.Builder(this)
         builder.title(INPUT_URL)
-        val currentUrl:String = SPUtil.get(KEY_URL, DEFAULT_RTMP_URL) as String
+        val currentUrl:String = SPUtil.get(KEY_URL, DEFAULT_PUSH_URL) as String
         builder.input(KEY_URL, currentUrl) { _, input ->
             SPUtil.put(KEY_URL, input.toString())
         }
@@ -122,7 +120,8 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.btFloatingAction -> {
-                applyPermission()
+//                applyPermission()
+                jumpToPush()
             }
             R.id.ivPerson -> {
 
@@ -150,10 +149,12 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
 
     private fun applyPermission() {
         if (Build.VERSION.SDK_INT > 22) {
-            permissionManager.applyPermission(this@MainActivity)
-        }else{
-            jumpToRecorder()
+            if(!permissionManager.checkPermission(this@MainActivity)) {
+                permissionManager.applyPermission(this@MainActivity)
+                return
+            }
         }
+        jumpToPush()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -161,7 +162,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
             REQUEST_CODE_CAMERA -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     if(permissionManager.checkPermission(this@MainActivity)){
-                        jumpToRecorder()
+                        jumpToPush()
                     }else{
                         permissionManager.applyPermission(this@MainActivity)
                     }
@@ -170,7 +171,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
             REQUEST_CODE_AUDIO -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     if(permissionManager.checkPermission(this@MainActivity)){
-                        jumpToRecorder()
+                        jumpToPush()
                     }else{
                         permissionManager.applyPermission(this@MainActivity)
                     }
@@ -180,9 +181,9 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         }
     }
 
-    private fun jumpToRecorder(){
-        val intent = Intent(this , RecorderActivity::class.java)
-        intent.putExtra(KEY_URL, DEFAULT_RTMP_URL)
+    private fun jumpToPush(){
+        val intent = Intent(this , PushActivity::class.java)
+        intent.putExtra(KEY_URL, DEFAULT_PUSH_URL)
         startActivity(intent)
     }
 

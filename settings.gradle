@@ -1,1 +1,1 @@
-include ':app', ':rtmp', 'common'
+include ':app', ':rtmp', 'common', ':push'

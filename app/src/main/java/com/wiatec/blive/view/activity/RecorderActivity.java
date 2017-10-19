@@ -13,6 +13,7 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -76,6 +77,7 @@ public class RecorderActivity extends Activity implements OnClickListener {
     private Lock yuvQueueLock = new ReentrantLock();
     private Thread aacEncoderThread = null;
     private Thread h264EncoderThread = null;
+    private DisplayOrientationListener displayOrientationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,12 @@ public class RecorderActivity extends Activity implements OnClickListener {
                 newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "recorder");
         pushUrl = getIntent().getStringExtra("url");
         if(TextUtils.isEmpty(pushUrl)) pushUrl = DEFAULT_PUSH_URL;
+        displayOrientationListener = new DisplayOrientationListener(this);
+        if (displayOrientationListener.canDetectOrientation()) {
+            displayOrientationListener.enable();
+        } else {
+            displayOrientationListener.disable();
+        }
     }
 
     @Override
@@ -112,6 +120,12 @@ public class RecorderActivity extends Activity implements OnClickListener {
     protected void onStop() {
         super.onStop();
         stopPush();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        displayOrientationListener.disable();
     }
 
     private void initAll() {
@@ -139,15 +153,15 @@ public class RecorderActivity extends Activity implements OnClickListener {
     }
 
     private void startPush() {
-        if (DEBUG_ENABLE) {
-            File saveDir = Environment.getExternalStorageDirectory();
-            String strFilename = saveDir + "/aaa.h264";
-            try {
-                outputStream = new DataOutputStream(new FileOutputStream(strFilename));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (DEBUG_ENABLE) {
+//            File saveDir = Environment.getExternalStorageDirectory();
+//            String strFilename = saveDir + "/aaa.h264";
+//            try {
+//                outputStream = new DataOutputStream(new FileOutputStream(strFilename));
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//        }
         rtmpSessionMgr = new RtmpSessionManager();
         rtmpSessionMgr.Start(pushUrl);
         int iFormat = cameraCodecType;
@@ -173,15 +187,6 @@ public class RecorderActivity extends Activity implements OnClickListener {
         yuvQueueLock.lock();
         yuvQueue.clear();
         yuvQueueLock.unlock();
-        if (DEBUG_ENABLE) {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     private int getDisplayRotation() {
@@ -249,7 +254,7 @@ public class RecorderActivity extends Activity implements OnClickListener {
         List<Size> PreviewSizeList = p.getSupportedPreviewSizes();
         List<Integer> PreviewFormats = p.getSupportedPreviewFormats();
         for (Size size : PreviewSizeList) {
-            Logger.d("  w: " + size.width + ", h: " + size.height);
+//            Logger.d("  w: " + size.width + ", h: " + size.height);
         }
         Integer iNV21Flag = 0;
         Integer iYV12Flag = 0;
@@ -386,21 +391,24 @@ public class RecorderActivity extends Activity implements OnClickListener {
                     if (yuvData == null) {
                         continue;
                     }
+                    int orientation = displayOrientationListener.getCurrentOrientation();
+//                    Logger.d(orientation+"");
                     if (isFront) {
                         yuvEdit = swEncH264.YUV420pRotate270(yuvData, HEIGHT, WIDTH);
                     } else {
-                        yuvEdit = swEncH264.YUV420pRotate90(yuvData, HEIGHT, WIDTH);
+                        if(orientation == 0) {
+                            yuvEdit = swEncH264.YUV420pRotate90(yuvData, HEIGHT, WIDTH);
+                        }else if(orientation == 90){
+                            yuvEdit = swEncH264.YUV420pRotate90(yuvData, WIDTH, HEIGHT);
+                        }else if(orientation == 180){
+                            yuvEdit = swEncH264.YUV420pRotate90(yuvData, HEIGHT, WIDTH);
+                        }else if(orientation == 270){
+                            yuvEdit = swEncH264.YUV420pRotate90(yuvData, WIDTH, HEIGHT);
+                        }
                     }
                     byte[] h264Data = swEncH264.EncoderH264(yuvEdit);
                     if (h264Data != null) {
                         rtmpSessionMgr.InsertVideoData(h264Data);
-                        if (DEBUG_ENABLE) {
-                            try {
-                                outputStream.write(h264Data);
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
                     }
                 }
                 try {
@@ -410,6 +418,7 @@ public class RecorderActivity extends Activity implements OnClickListener {
                 }
             }
             yuvQueue.clear();
+            Logger.d("h264 Encoder Thread ended ......");
         }
     };
 
@@ -458,4 +467,37 @@ public class RecorderActivity extends Activity implements OnClickListener {
             Logger.d("AAC Encoder Thread ended ......");
         }
     };
+
+    private static class DisplayOrientationListener extends OrientationEventListener{
+
+        private int currentOrientation = 0 ;
+
+        public DisplayOrientationListener(Context context) {
+            super(context);
+        }
+
+        public DisplayOrientationListener(Context context, int rate) {
+            super(context, rate);
+        }
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+                return;
+            }
+            if (orientation > 350 || orientation < 10) { //0度
+                currentOrientation = 0;
+            } else if (orientation > 80 && orientation < 100) { //90度
+                currentOrientation = 90;
+            } else if (orientation > 170 && orientation < 190) { //180度
+                currentOrientation = 180;
+            } else if (orientation > 260 && orientation < 280) { //270度
+                currentOrientation = 270;
+            }
+        }
+
+        public int getCurrentOrientation() {
+            return currentOrientation;
+        }
+    }
 }

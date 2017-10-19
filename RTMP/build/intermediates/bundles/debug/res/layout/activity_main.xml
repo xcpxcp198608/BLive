@@ -10,7 +10,7 @@
     tools:context="com.alex.livertmppushsdk.MainActivity" >
 
     <SurfaceView
-        android:id="@+id/surfaceViewEx"
+        android:id="@+id/surfaceView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="1dp" />
@@ -19,7 +19,7 @@
         android:id="@+id/Startbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/surfaceViewEx"
+        android:layout_alignLeft="@+id/surfaceView"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="82dp"
         android:text="@string/Startbutton" />
@@ -28,7 +28,7 @@
         android:id="@+id/Stopbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/surfaceViewEx"
+        android:layout_alignBottom="@+id/surfaceView"
         android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/Startbutton"
         android:text="@string/Stopbutton" />

@@ -22,7 +22,7 @@ public final class R {
         public static final int Stopbutton=0x7f080003;
         public static final int action_settings=0x7f080004;
         public static final int cameraRelative=0x7f080000;
-        public static final int surfaceViewEx=0x7f080001;
+        public static final int surfaceView=0x7f080001;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -41,15 +41,8 @@ public final class R {
     public static final class style {
         /**  API 11 theme customizations can go here. 
  API 14 theme customizations can go here. 
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
          */
         public static final int AppBaseTheme=0x7f040000;
-        /**  All customizations that are NOT specific to a particular API-level can go here. 
-         */
         public static final int AppTheme=0x7f040001;
     }
 }
