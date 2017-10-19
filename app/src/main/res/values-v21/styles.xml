@@ -8,8 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">#ffffff</item>
         <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:actionOverflowMenuStyle">@style/MenuStyle</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="actionMenuTextColor">@android:color/white</item>
         <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
     </style>

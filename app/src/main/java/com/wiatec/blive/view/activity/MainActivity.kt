@@ -1,15 +1,20 @@
 package com.wiatec.blive.view.activity
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.px.common.utils.EmojiToast
 import com.px.common.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
 import com.wiatec.blive.instance.DEFAULT_RTMP_URL
@@ -18,6 +23,9 @@ import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.FragmentAdapter
 import com.wiatec.blive.instance.KEY_AUTH_TOKEN
+import com.wiatec.blive.manager.PermissionManager
+import com.wiatec.blive.manager.REQUEST_CODE_AUDIO
+import com.wiatec.blive.manager.REQUEST_CODE_CAMERA
 import com.wiatec.blive.presenter.MainPresenter
 import com.wiatec.blive.utils.WindowUtil
 import com.wiatec.blive.view.fragment.FragmentLiveChannel
@@ -30,6 +38,10 @@ import kotlinx.android.synthetic.main.tool_bar_main.*
  * http://128.1.68.58:88/get.php?username=ZHbSkeb6u1&password=X8wSsqgi1J&type=m3u&output=mpegts
  */
 class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickListener{
+
+    private var exitTime = 0L
+    private val necessaryPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+    private val permissionManager = PermissionManager(necessaryPermissions)
 
     override fun createPresenter(): MainPresenter = MainPresenter(this@MainActivity)
 
@@ -110,7 +122,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.btFloatingAction -> {
-                jumpToRecorder()
+                applyPermission()
             }
             R.id.ivPerson -> {
 
@@ -127,10 +139,45 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if(event!!.keyCode == KeyEvent.KEYCODE_BACK){
-
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                EmojiToast.show("Press back key down again exit", EmojiToast.EMOJI_SMILE)
+                exitTime = System.currentTimeMillis()
+                return true
+            }
         }
-
         return super.onKeyDown(keyCode, event)
+    }
+
+    private fun applyPermission() {
+        if (Build.VERSION.SDK_INT > 22) {
+            permissionManager.applyPermission(this@MainActivity)
+        }else{
+            jumpToRecorder()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode){
+            REQUEST_CODE_CAMERA -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    if(permissionManager.checkPermission(this@MainActivity)){
+                        jumpToRecorder()
+                    }else{
+                        permissionManager.applyPermission(this@MainActivity)
+                    }
+                }
+            }
+            REQUEST_CODE_AUDIO -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    if(permissionManager.checkPermission(this@MainActivity)){
+                        jumpToRecorder()
+                    }else{
+                        permissionManager.applyPermission(this@MainActivity)
+                    }
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
     }
 
     private fun jumpToRecorder(){

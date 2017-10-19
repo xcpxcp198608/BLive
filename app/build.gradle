@@ -51,7 +51,7 @@ android {
             def fileName = ""
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 if (variant.buildType.name == 'release') {
-                    fileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}.apk"
+                    fileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}_release.apk"
                 } else if (variant.buildType.name == 'debug') {
                     fileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}_${defaultConfig.versionCode}_debug.apk"
                 }

@@ -1,23 +1,16 @@
 package com.wiatec.blive.view.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Surface;
@@ -58,8 +51,6 @@ public class RecorderActivity extends Activity implements OnClickListener {
     private static final int BITRATE_DEF = 800 * 1000;
     private static final int SAMPLE_RATE_DEF = 22050;
     private static final int CHANNEL_NUMBER_DEF = 2;
-    private static final int REQUEST_CAMERA = 0;
-    private static final int REQUEST_AUDIO = 1;
     private static final boolean DEBUG_ENABLE = false;
     private static final String DEFAULT_PUSH_URL = "rtmp://us3.protv.company:1939/live/BVISION4";
 
@@ -74,11 +65,11 @@ public class RecorderActivity extends Activity implements OnClickListener {
     private SurfaceView surfaceView = null;
     private SWVideoEncoder swEncH264 = null;
     private boolean isFront = false;
-    private boolean isHorizantal = false;
+    private boolean isHorizontal = false;
     private boolean isPushing = false;
     private int degrees = 0;
     private int cameraCodecType = android.graphics.ImageFormat.NV21;
-    private byte[] yuvNV21 = new byte[WIDTH * HEIGHT * 3 / 2];
+//    private byte[] yuvNV21 = new byte[WIDTH * HEIGHT * 3 / 2];
     private byte[] yuvEdit = new byte[WIDTH * HEIGHT * 3 / 2];
     private RtmpSessionManager rtmpSessionMgr = null;
     private Queue<byte[]> yuvQueue = new LinkedList<>();
@@ -126,22 +117,12 @@ public class RecorderActivity extends Activity implements OnClickListener {
     private void initAll() {
         ImageButton ibtSwitchCamera = (ImageButton) findViewById(R.id.ibtSwitchCamera);
         ibtSwitchCamera.setOnClickListener(this);
-//        WindowManager wm = this.getWindowManager();
-//        int width = wm.getDefaultDisplay().getWidth();
-//        int height = wm.getDefaultDisplay().getHeight();
-//        int iNewWidth = (int) (height * 3.0 / 4.0);
-//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-//                RelativeLayout.LayoutParams.MATCH_PARENT);
-//        int iPos = width - iNewWidth;
-//        layoutParams.setMargins(iPos, 0, 0, 0);
         surfaceView = (SurfaceView) this.findViewById(R.id.surfaceView);
         surfaceView.getHolder().setFixedSize(HEIGHT, WIDTH);
         surfaceView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         surfaceView.getHolder().setKeepScreenOn(true);
         surfaceView.getHolder().addCallback(new SurfaceCallBack());
-//        surfaceView.setLayoutParams(layoutParams);
         initAudioRecord();
-//        rtmpStartMessage();
         startPush();
     }
 
@@ -156,26 +137,6 @@ public class RecorderActivity extends Activity implements OnClickListener {
         fdkAacEnc = new FdkAacEncode();
         fdkAacHandle = fdkAacEnc.FdkAacInit(SAMPLE_RATE_DEF, CHANNEL_NUMBER_DEF);
     }
-
-    private void rtmpStartMessage() {
-        Message msg = new Message();
-        msg.what = ID_RTMP_PUSH_START;
-        Bundle b = new Bundle();
-        b.putInt("ret", 0);
-        msg.setData(b);
-        mHandler.sendMessage(msg);
-    }
-
-    public Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case ID_RTMP_PUSH_START: {
-                    startPush();
-                    break;
-                }
-            }
-        }
-    };
 
     private void startPush() {
         if (DEBUG_ENABLE) {
@@ -196,32 +157,19 @@ public class RecorderActivity extends Activity implements OnClickListener {
         h264EncoderThread = new Thread(h264Runnable);
         h264EncoderThread.setPriority(Thread.MAX_PRIORITY);
         h264EncoderThread.start();
-        if (Build.VERSION.SDK_INT>22){
-            if (ContextCompat.checkSelfPermission(RecorderActivity.this,
-                    Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(RecorderActivity.this,
-                        new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_AUDIO);
-            }else {
-                audioRecorder.startRecording();
-                aacEncoderThread = new Thread(aacEncoderRunnable);
-                aacEncoderThread.setPriority(Thread.MAX_PRIORITY);
-                aacEncoderThread.start();
-            }
-        }else {
-            audioRecorder.startRecording();
-            aacEncoderThread = new Thread(aacEncoderRunnable);
-            aacEncoderThread.setPriority(Thread.MAX_PRIORITY);
-            aacEncoderThread.start();
-        }
+        audioRecorder.startRecording();
+        aacEncoderThread = new Thread(aacEncoderRunnable);
+        aacEncoderThread.setPriority(Thread.MAX_PRIORITY);
+        aacEncoderThread.start();
     }
 
     private void stopPush() {
         isPushing = false;
         if(aacEncoderThread != null) aacEncoderThread.interrupt();
-        h264EncoderThread.interrupt();
-        audioRecorder.stop();
-        swEncH264.stop();
-        rtmpSessionMgr.Stop();
+        if(h264EncoderThread != null)h264EncoderThread.interrupt();
+        if(audioRecorder != null)audioRecorder.stop();
+        if(swEncH264 != null)swEncH264.stop();
+        if(rtmpSessionMgr != null)rtmpSessionMgr.Stop();
         yuvQueueLock.lock();
         yuvQueue.clear();
         yuvQueueLock.unlock();
@@ -294,6 +242,7 @@ public class RecorderActivity extends Activity implements OnClickListener {
     };
 
     public void initCamera() {
+        if(mCamera == null ) mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
         Camera.Parameters p = mCamera.getParameters();
         Size previewSize = p.getPreviewSize();
         Logger.d("Original Width:" + previewSize.width + ", height:" + previewSize.height);
@@ -339,36 +288,22 @@ public class RecorderActivity extends Activity implements OnClickListener {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             degrees = getDisplayOrientation(getDisplayRotation(), 0);
-            if (mCamera != null) {
-                initCamera();
-                return;
-            }
-            if (Build.VERSION.SDK_INT>22){
-                if (ContextCompat.checkSelfPermission(RecorderActivity.this,
-                        Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(RecorderActivity.this,
-                            new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA);
-                }else {
-                    mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-                    initCamera();
-                }
-            }else {
-                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-                initCamera();
-            }
+            initCamera();
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            mCamera.autoFocus(new Camera.AutoFocusCallback() {
-                @Override
-                public void onAutoFocus(boolean success, Camera camera) {
-                    if (success) {
-                        initCamera();
-                        camera.cancelAutoFocus();
+            if(mCamera!= null) {
+                mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                    @Override
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        if (success) {
+                            initCamera();
+                            camera.cancelAutoFocus();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         @Override
@@ -462,7 +397,6 @@ public class RecorderActivity extends Activity implements OnClickListener {
                         if (DEBUG_ENABLE) {
                             try {
                                 outputStream.write(h264Data);
-                                int iH264Len = h264Data.length;
                             } catch (IOException e1) {
                                 e1.printStackTrace();
                             }
@@ -498,7 +432,7 @@ public class RecorderActivity extends Activity implements OnClickListener {
 
             while (!aacEncoderThread.interrupted() && isPushing) {
                 int iPCMLen = audioRecorder.read(recorderBuffer, 0, recorderBuffer.length); // Fill buffer
-                if ((iPCMLen != audioRecorder.ERROR_BAD_VALUE) && (iPCMLen != 0)) {
+                if ((iPCMLen != AudioRecord.ERROR_BAD_VALUE) && (iPCMLen != 0)) {
                     if (fdkAacHandle != 0) {
                         byte[] aacBuffer = fdkAacEnc.FdkAacEncode(fdkAacHandle, recorderBuffer);
                         if (aacBuffer != null) {

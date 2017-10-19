@@ -122,6 +122,11 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
             }else{
                 jumpToAuth()
             }
+        }else{
+            Thread(Runnable {
+                Thread.sleep(2000)
+                jumpToMain()
+            }).start()
         }
     }
 

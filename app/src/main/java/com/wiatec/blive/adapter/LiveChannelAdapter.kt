@@ -11,7 +11,7 @@ import com.wiatec.blive.pojo.ChannelInfo
  * Created by patrick on 17/10/2017.
  * create time : 5:40 PM
  */
-class LiveChannelAdapter(private val channelList: List<ChannelInfo>):
+class LiveChannelAdapter(private var channelList: List<ChannelInfo>):
         BaseRecycleAdapter<LiveChannelViewHolder>() {
 
     override fun setLayoutId(): Int = R.layout.item_live_channel
@@ -36,4 +36,9 @@ class LiveChannelAdapter(private val channelList: List<ChannelInfo>):
     }
 
     override fun getItemCounts(): Int = channelList.size
+
+    fun notifyChange(channelList: List<ChannelInfo>){
+        this.channelList = channelList
+        notifyDataSetChanged()
+    }
 }
