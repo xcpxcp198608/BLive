@@ -1,9 +1,12 @@
 package com.wiatec.blive.model
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.px.common.http.HttpMaster
+import com.px.common.http.Listener.StringListener
 import com.px.common.utils.Logger
-import com.wiatec.blive.pojo.ResultInfo
-import com.wiatec.blive.pojo.TokenInfo
-import com.wiatec.blive.pojo.UserInfo
+import com.wiatec.blive.instance.RTMP_TOKEN_URL
+import com.wiatec.blive.pojo.*
 import com.wiatec.blive.utils.RMaster
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,7 +28,10 @@ class AuthProvider{
                     }
 
                     override fun onResponse(call: Call<ResultInfo<UserInfo>>?, response: Response<ResultInfo<UserInfo>>?) {
-                        if(response == null) return
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
                         val resultInfo = response.body()
                         if(resultInfo != null){
                             loadListener.onSuccess(true, resultInfo)
@@ -46,7 +52,10 @@ class AuthProvider{
                     }
 
                     override fun onResponse(call: Call<ResultInfo<TokenInfo>>?, response: Response<ResultInfo<TokenInfo>>?) {
-                        if(response == null) return
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
                         val resultInfo = response.body()
                         if(resultInfo != null){
                             loadListener.onSuccess(true, resultInfo)
@@ -67,7 +76,10 @@ class AuthProvider{
                     }
 
                     override fun onResponse(call: Call<ResultInfo<UserInfo>>?, response: Response<ResultInfo<UserInfo>>?) {
-                        if(response == null) return
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
                         val resultInfo = response.body()
                         if(resultInfo != null){
                             Logger.d(resultInfo.toString())
@@ -89,7 +101,10 @@ class AuthProvider{
                     }
 
                     override fun onResponse(call: Call<ResultInfo<UserInfo>>?, response: Response<ResultInfo<UserInfo>>?) {
-                        if(response == null) return
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
                         val resultInfo = response.body()
                         if(resultInfo != null){
                             loadListener.onSuccess(true, resultInfo)
@@ -99,4 +114,24 @@ class AuthProvider{
                     }
                 })
     }
+
+    fun getPush(username: String, token: String, loadListener: LoadListener<PushInfo>){
+        val url = "$RTMP_TOKEN_URL?username=$username&token=$token"
+        HttpMaster.get(url)
+                .enqueue(object : StringListener(){
+                    override fun onSuccess(s: String?) {
+                        if(s == null){
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
+                        val pushInfo: PushInfo = Gson().fromJson(s, object: TypeToken<PushInfo>(){}.type)
+                        loadListener.onSuccess(true, pushInfo)
+                    }
+
+                    override fun onFailure(e: String?) {
+                        loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
 }

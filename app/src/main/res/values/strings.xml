@@ -26,4 +26,6 @@
     <string name="notice">Notice</string>
     <string name="stop_publish">Stop publish and exit?</string>
     <string name="switch_camera">switch_camera</string>
+    <string name="play_pause">play_pause</string>
+    <string name="live_title">LiveTitle</string>
 </resources>

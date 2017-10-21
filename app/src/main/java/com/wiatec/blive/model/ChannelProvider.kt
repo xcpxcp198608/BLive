@@ -36,4 +36,77 @@ class ChannelProvider {
                 })
     }
 
+    fun updateChannel(channelInfo: ChannelInfo, loadListener: LoadListener<ResultInfo<ChannelInfo>>){
+        RMaster.retrofit.create(ChannelService::class.java)
+                .updateChannel(channelInfo)
+                .enqueue(object : Callback<ResultInfo<ChannelInfo>>{
+                    override fun onResponse(call: Call<ResultInfo<ChannelInfo>>?, response: Response<ResultInfo<ChannelInfo>>?) {
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
+                        val resultInfo = response.body()
+                        if(resultInfo != null){
+                            loadListener.onSuccess(true, resultInfo)
+                        }else{
+                            loadListener.onSuccess(false, null)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResultInfo<ChannelInfo>>?, t: Throwable?) {
+                        if (t?.message != null) Logger.d(t.message)
+                        loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
+    fun updateChannelName(channelInfo: ChannelInfo, loadListener: LoadListener<ResultInfo<ChannelInfo>>){
+        RMaster.retrofit.create(ChannelService::class.java)
+                .updateChannelName(channelInfo)
+                .enqueue(object : Callback<ResultInfo<ChannelInfo>>{
+                    override fun onResponse(call: Call<ResultInfo<ChannelInfo>>?, response: Response<ResultInfo<ChannelInfo>>?) {
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
+                        val resultInfo = response.body()
+                        if(resultInfo != null){
+                            loadListener.onSuccess(true, resultInfo)
+                        }else{
+                            loadListener.onSuccess(false, null)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResultInfo<ChannelInfo>>?, t: Throwable?) {
+                        if (t?.message != null) Logger.d(t.message)
+                        loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
+    fun updateChannelStatus(activate: Int, userId: Int, loadListener: LoadListener<ResultInfo<ChannelInfo>>){
+        RMaster.retrofit.create(ChannelService::class.java)
+                .updateChannelStatus(activate, userId)
+                .enqueue(object : Callback<ResultInfo<ChannelInfo>>{
+                    override fun onResponse(call: Call<ResultInfo<ChannelInfo>>?, response: Response<ResultInfo<ChannelInfo>>?) {
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
+                        val resultInfo = response.body()
+                        if(resultInfo != null){
+                            Logger.d(resultInfo.toString())
+                            loadListener.onSuccess(true, resultInfo)
+                        }else{
+                            loadListener.onSuccess(false, null)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResultInfo<ChannelInfo>>?, t: Throwable?) {
+                        if (t?.message != null) Logger.d(t.message)
+                        loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
 }

@@ -7,6 +7,7 @@ class UserInfo {
     var password: String? = null
     var email: String? = null
     var phone: String? = null
+    var icon: String? = null
     var isStatus: Boolean = false
     var registerTime: String? = null
     var channelInfo: ChannelInfo? = null
@@ -36,6 +37,7 @@ class UserInfo {
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
+                ", icon='" + icon + '\'' +
                 ", status=" + isStatus +
                 ", registerTime='" + registerTime + '\'' +
                 ", channelInfo=" + channelInfo +

@@ -1,10 +1,9 @@
 package com.wiatec.blive.presenter
 
 import com.wiatec.blive.model.AuthProvider
+import com.wiatec.blive.model.ChannelProvider
 import com.wiatec.blive.model.LoadListener
-import com.wiatec.blive.pojo.ResultInfo
-import com.wiatec.blive.pojo.TokenInfo
-import com.wiatec.blive.pojo.UserInfo
+import com.wiatec.blive.pojo.*
 import com.wiatec.blive.view.activity.Auth
 
 /**
@@ -14,11 +13,11 @@ import com.wiatec.blive.view.activity.Auth
 class AuthPresenter(val auth: Auth): BasePresenter<Auth>(){
 
     private val authProvider: AuthProvider = AuthProvider()
+    private val channelProvider: ChannelProvider = ChannelProvider()
 
     fun signUp(userInfo: UserInfo){
         authProvider.signUp(userInfo, object: LoadListener<ResultInfo<UserInfo>>{
             override fun onSuccess(execute: Boolean, t: ResultInfo<UserInfo>?) {
-                if(t == null) return
                 auth.signUp(execute, t)
             }
 
@@ -30,7 +29,6 @@ class AuthPresenter(val auth: Auth): BasePresenter<Auth>(){
     fun signIn(userInfo: UserInfo){
         authProvider.signIn(userInfo, object: LoadListener<ResultInfo<TokenInfo>>{
             override fun onSuccess(execute: Boolean, t: ResultInfo<TokenInfo>?) {
-                if(t == null) return
                 auth.signIn(execute, t)
             }
 
@@ -42,7 +40,6 @@ class AuthPresenter(val auth: Auth): BasePresenter<Auth>(){
     fun resetPassword(userInfo: UserInfo){
         authProvider.resetPassword(userInfo, object: LoadListener<ResultInfo<UserInfo>>{
             override fun onSuccess(execute: Boolean, t: ResultInfo<UserInfo>?) {
-                if(t == null) return
                 auth.resetPassword(execute, t)
             }
 
@@ -50,4 +47,28 @@ class AuthPresenter(val auth: Auth): BasePresenter<Auth>(){
             }
         })
     }
+
+    fun getPush(username: String, token: String){
+        authProvider.getPush(username, token, object : LoadListener<PushInfo>{
+            override fun onSuccess(execute: Boolean, t: PushInfo?) {
+                auth.getPush(execute, t)
+            }
+
+            override fun onFailure(e: String) {
+            }
+        })
+    }
+
+    fun updateChannel(channelInfo: ChannelInfo){
+        channelProvider.updateChannel(channelInfo, object : LoadListener<ResultInfo<ChannelInfo>>{
+            override fun onSuccess(execute: Boolean, t: ResultInfo<ChannelInfo>?) {
+                auth.updateChannel(execute, t)
+            }
+
+            override fun onFailure(e: String) {
+
+            }
+        })
+    }
+
 }

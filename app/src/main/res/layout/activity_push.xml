@@ -11,11 +11,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:id="@+id/llSetting"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etChannelTitle"
+            android:hint="@string/live_title"
+            tools:text="fdsfsdf"
+            android:textColorHint="@color/colorGray"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btConfirm"
+            android:layout_marginTop="10dp"
+            android:textAllCaps="false"
+            android:text="@string/confirm"
+            android:background="@drawable/bg_bt_auth"
+            android:textColor="@android:color/white"
+            android:layout_gravity="right"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
     <ImageButton
         android:layout_margin="10dp"
         android:id="@+id/ibtSwitchCamera"
-        android:layout_gravity="right"
-        android:background="@drawable/ic_switch_camera_pink_400_36dp"
+        android:elevation="8dp"
+        android:background="@drawable/bg_bt_switch_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/switch_camera" />
@@ -23,9 +56,11 @@
     <ImageButton
         android:id="@+id/ibtStart"
         android:layout_margin="10dp"
+        android:elevation="8dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:background="@drawable/ic_play_circle_outline_pink_400_48dp"
+        android:background="@drawable/bg_bt_play"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/play_pause" />
 
 </FrameLayout>

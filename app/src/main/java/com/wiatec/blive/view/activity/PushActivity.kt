@@ -3,18 +3,14 @@ package com.wiatec.blive.view.activity
 import android.content.Context
 import android.content.res.Configuration
 import android.hardware.Camera
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.OrientationEventListener
-import android.view.View
-import android.view.WindowManager
+import android.view.*
+import com.afollestad.materialdialogs.MaterialDialog
 import com.github.faucamp.simplertmp.RtmpHandler
 import com.px.common.utils.Logger
 
 import com.wiatec.blive.R
-import com.wiatec.blive.instance.DEFAULT_PUSH_URL
-import com.wiatec.blive.instance.KEY_URL
 import kotlinx.android.synthetic.main.activity_push.*
 import net.ossrs.yasea.SrsEncodeHandler
 import net.ossrs.yasea.SrsPublisher
@@ -24,9 +20,16 @@ import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.net.SocketException
 import com.px.common.utils.EmojiToast
+import com.px.common.utils.SPUtil
+import com.seu.magicfilter.utils.MagicFilterType
+import com.wiatec.blive.animator.Rotation
+import com.wiatec.blive.instance.*
+import com.wiatec.blive.pojo.ChannelInfo
+import com.wiatec.blive.pojo.ResultInfo
+import com.wiatec.blive.presenter.PushPresenter
 
 
-class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.RtmpListener,
+class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickListener, RtmpHandler.RtmpListener,
         SrsRecordHandler.SrsRecordListener, SrsEncodeHandler.SrsEncodeListener {
 
     private var pushUrl = ""
@@ -34,17 +37,17 @@ class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.Rtmp
     private var publisher: SrsPublisher? = null
     private var displayOrientationListener: DisplayOrientationListener? = null
 
+    override fun createPresenter(): PushPresenter = PushPresenter(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_push)
-        pushUrl = intent.getStringExtra(KEY_URL)
-        if(TextUtils.isEmpty(pushUrl)) pushUrl = DEFAULT_PUSH_URL
         initView()
-        initPublish()
     }
 
     private fun initView() {
@@ -54,8 +57,17 @@ class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.Rtmp
         } else {
             displayOrientationListener!!.disable()
         }
+        ibtStart.isEnabled = false
+        btConfirm.setOnClickListener(this)
         ibtStart.setOnClickListener(this)
         ibtSwitchCamera.setOnClickListener(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        pushUrl = intent.getStringExtra(KEY_URL)
+        if(TextUtils.isEmpty(pushUrl)) pushUrl = TEST_PUSH_URL
+        initPublish()
     }
 
     private fun initPublish(){
@@ -68,25 +80,49 @@ class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.Rtmp
         publisher!!.setScreenOrientation(Configuration.ORIENTATION_LANDSCAPE)
         publisher!!.setVideoHDMode()
         publisher!!.switchCameraFace(Camera.CameraInfo.CAMERA_FACING_BACK)
+        publisher!!.switchCameraFilter(MagicFilterType.SUNRISE)
         publisher!!.startCamera()
     }
 
     override fun onClick(v: View?) {
         when(v!!.id){
+            R.id.btConfirm -> {
+                var name = etChannelTitle.text.toString()
+                if(TextUtils.isEmpty(name)){
+                    name = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+                }
+                val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+                presenter!!.updateChannelName(ChannelInfo(name, userId))
+            }
             R.id.ibtStart -> {
                 if(isPushing){
                     stopPush()
-                    ibtStart.setBackgroundResource(R.drawable.ic_play_circle_outline_pink_400_48dp)
+                    ibtStart.setBackgroundResource(R.drawable.bg_bt_play)
                 }else{
                     startPush()
-                    ibtStart.setBackgroundResource(R.drawable.ic_pause_circle_outline_pink_400_48dp)
+                    ibtStart.setBackgroundResource(R.drawable.bg_bt_pause)
                 }
             }
             R.id.ibtSwitchCamera -> {
+                Rotation.r180(ibtSwitchCamera)
                 if(publisher != null) {
                     publisher!!.switchCameraFace((publisher!!.camraId + 1) % Camera.getNumberOfCameras())
                 }
             }
+        }
+    }
+
+    override fun updateChannelName(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
+        if(execute && resultInfo != null){
+            Logger.d(resultInfo.toString())
+            if(resultInfo.code == ResultInfo.CODE_OK){
+                llSetting.visibility = View.GONE
+                ibtStart.isEnabled = true
+            }else{
+                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
+            }
+        }else{
+            EmojiToast.show("server error", EmojiToast.EMOJI_SAD)
         }
     }
 
@@ -107,9 +143,13 @@ class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.Rtmp
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        stopPush()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        stopPush()
         displayOrientationListener!!.disable()
     }
 
@@ -155,6 +195,7 @@ class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.Rtmp
 
     override fun onRtmpConnected(msg: String?) {
         Logger.d("onRtmpConnected")
+        presenter!!.updateChannelStatus(ACTIVATE)
     }
 
     override fun onRtmpVideoStreaming() {
@@ -170,6 +211,7 @@ class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.Rtmp
 
     override fun onRtmpDisconnected() {
         Logger.d("onRtmpDisconnected")
+        presenter!!.updateChannelStatus(DEACTIVATE)
     }
 
     override fun onRtmpVideoFpsChanged(fps: Double) {
@@ -239,6 +281,28 @@ class PushActivity : AppCompatActivity(), View.OnClickListener, RtmpHandler.Rtmp
                 currentOrientation = 270
             }
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(isPushing) {
+                showExitPublishDialog()
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun showExitPublishDialog(){
+        MaterialDialog.Builder(this@PushActivity)
+                .title(R.string.notice)
+                .content(R.string.stop_publish)
+                .positiveText(R.string.confirm)
+                .onPositive { dialog, which ->
+                    stopPush()
+                    displayOrientationListener!!.disable()
+                    finish()
+                }
+                .show()
     }
 
 }

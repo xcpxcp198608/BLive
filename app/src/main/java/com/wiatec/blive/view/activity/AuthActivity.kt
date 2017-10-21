@@ -13,11 +13,8 @@ import android.widget.TextView
 import com.px.common.utils.*
 
 import com.wiatec.blive.R
-import com.wiatec.blive.instance.KEY_AUTH_TOKEN
-import com.wiatec.blive.instance.KEY_AUTH_USERNAME
-import com.wiatec.blive.pojo.ResultInfo
-import com.wiatec.blive.pojo.TokenInfo
-import com.wiatec.blive.pojo.UserInfo
+import com.wiatec.blive.instance.*
+import com.wiatec.blive.pojo.*
 import com.wiatec.blive.presenter.AuthPresenter
 import com.wiatec.blive.utils.WindowUtil
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -36,8 +33,8 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-        initView()
         initToolBar()
+        initView()
     }
 
     private fun initView(){
@@ -240,7 +237,6 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
         btSignUp.isEnabled = true
         btSignUp.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null){
-            Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
                 if(resultInfo.t != null) {
                     SPUtil.put(KEY_AUTH_USERNAME, resultInfo.t!!.username)
@@ -251,7 +247,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
         }else{
-            EmojiToast.show("signup failure", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("signup server error", EmojiToast.EMOJI_SAD)
         }
     }
 
@@ -260,22 +256,48 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
         btSignIn.isEnabled = true
         btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null){
-            Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
                 if(resultInfo.t != null) {
                     SPUtil.put(KEY_AUTH_TOKEN, resultInfo.t!!.token)
                     if(resultInfo.t!!.userInfo != null) {
                         SPUtil.put(KEY_AUTH_USERNAME, resultInfo.t!!.userInfo!!.username)
+                        SPUtil.put(KEY_AUTH_USER_ID, resultInfo.t!!.userInfo!!.id)
                     }
                 }
-                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SMILE)
-                jumpToMain()
+                presenter!!.getPush(resultInfo.t!!.userInfo!!.username!!, RTMP_TOKEN)
             }else {
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
         }else{
-            EmojiToast.show("signin failure", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
         }
+    }
+
+    override fun getPush(execute: Boolean, pushInfo: PushInfo?) {
+        if(execute && pushInfo != null) {
+            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data.push_full_url)
+            val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+            if(userId == 0){
+                EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
+            }else {
+                presenter!!.updateChannel(ChannelInfo(pushInfo.data.push_full_url,
+                        pushInfo.data.play_url, userId))
+            }
+        }else{
+            EmojiToast.show("live server error", EmojiToast.EMOJI_SAD)
+        }
+    }
+
+    override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
+        if(execute && resultInfo != null) {
+            Logger.d(resultInfo.toString())
+            if(resultInfo.code != ResultInfo.CODE_OK){
+                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
+            }
+        }else{
+            EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
+        }
+        jumpToMain()
     }
 
     override fun resetPassword(execute: Boolean, resultInfo: ResultInfo<UserInfo>?) {
@@ -283,7 +305,6 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
         btReset.isEnabled = true
         btReset.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null){
-            Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SMILE)
                 showSignInFromReset()

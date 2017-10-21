@@ -29,6 +29,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon, android:theme">
         <activity android:name=".view.activity.SplashActivity"
+            android:theme="@style/SplashTheme"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +41,18 @@
             android:name=".view.activity.MainActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".view.activity.AuthActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".view.activity.PlayActivity"
+            android:screenOrientation="landscape" />
+
+        <activity android:name=".view.activity.PushActivity"
+            android:screenOrientation="landscape"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.wiatec.blive.fileprovider"
@@ -50,16 +63,6 @@
                 android:resource="@xml/paths" />
         </provider>
 
-        <activity
-            android:name=".view.activity.AuthActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".view.activity.PlayActivity"
-            android:screenOrientation="landscape" />
-        <activity android:name=".view.activity.PushActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>

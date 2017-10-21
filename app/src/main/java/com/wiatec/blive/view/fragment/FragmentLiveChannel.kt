@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.px.common.adapter.BaseRecycleAdapter
 import com.px.common.utils.Logger
 import com.px.common.utils.NetUtil
 import com.wiatec.blive.R
@@ -19,7 +18,7 @@ import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.presenter.LiveFragmentPresenter
 import com.wiatec.blive.view.activity.PlayActivity
-import kotlinx.android.synthetic.main.activity_auth.*
+import com.wiatec.blive.view.custom_view.BasicLinearItemDecoration
 import kotlinx.android.synthetic.main.fragment_live.*
 
 /**
@@ -46,11 +45,12 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
         if(execute && channelInfoList != null){
             if(liveChannelAdapter == null) {
                 liveChannelAdapter = LiveChannelAdapter(channelInfoList)
+                rcvLive.adapter = liveChannelAdapter
+                rcvLive.layoutManager = LinearLayoutManager(context)
+                rcvLive.addItemDecoration(BasicLinearItemDecoration(2))
             }else{
                 liveChannelAdapter!!.notifyChange(channelInfoList)
             }
-            rcvLive.adapter = liveChannelAdapter
-            rcvLive.layoutManager = LinearLayoutManager(context)
             liveChannelAdapter!!.setOnItemClickListener { _, position ->
                 val channelInfo = channelInfoList[position]
                 playLiveChannel(channelInfo)
@@ -66,11 +66,12 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
 
     private fun playLiveChannel(channelInfo: ChannelInfo){
         val intent = Intent(context, PlayActivity::class.java)
-        intent.putExtra(KEY_URL, channelInfo.url)
+        intent.putExtra(KEY_URL, channelInfo.playUrl)
         startActivity(intent)
     }
 
     private fun showErrorSnackNotice(message: String){
+        if(linearLayout == null) return
         val snackBar = Snackbar.make(linearLayout, message, Snackbar.LENGTH_LONG)
         snackBar.view.setBackgroundResource(R.color.colorBlue1)
         val tvContent = snackBar.view.findViewById(R.id.snackbar_text) as TextView

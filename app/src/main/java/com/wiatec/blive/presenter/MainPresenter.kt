@@ -8,7 +8,7 @@ import com.wiatec.blive.view.activity.Main
  */
 class MainPresenter(var main: Main): BasePresenter<Main>() {
 
-    fun load(){
+    fun deactivateChannel(){
 
     }
 }

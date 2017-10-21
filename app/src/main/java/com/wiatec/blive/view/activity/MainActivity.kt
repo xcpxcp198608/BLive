@@ -13,13 +13,13 @@ import android.view.View
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.px.common.utils.EmojiToast
+import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
-import com.wiatec.blive.instance.DEFAULT_PUSH_URL
+import com.wiatec.blive.instance.TEST_PUSH_URL
 import com.wiatec.blive.instance.INPUT_URL
 import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.R
-import com.wiatec.blive.adapter.FragmentAdapter
 import com.wiatec.blive.instance.KEY_AUTH_TOKEN
 import com.wiatec.blive.manager.PermissionManager
 import com.wiatec.blive.manager.REQUEST_CODE_AUDIO
@@ -46,13 +46,12 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            val systemBarTintManager = SystemBarTintManager(this)
-            systemBarTintManager.isStatusBarTintEnabled = true
-            systemBarTintManager.setStatusBarTintResource(R.color.colorAccent)
-        }
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+//            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+//            val systemBarTintManager = SystemBarTintManager(this)
+//            systemBarTintManager.isStatusBarTintEnabled = true
+//            systemBarTintManager.setStatusBarTintResource(R.color.colorAccent)
+//        }
         initToolBar()
         initSlideNavigation()
         initFragment()
@@ -85,12 +84,9 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
 
     private fun initFragment() {
         val fragmentLive = FragmentLiveChannel()
-        val fragmentList: MutableList<Fragment> = MutableList(0, {
-            return
-        })
-        fragmentList.add(fragmentLive)
-        val fragmentAdapter = FragmentAdapter(supportFragmentManager ,fragmentList)
-        viewPager.adapter = fragmentAdapter
+        supportFragmentManager.beginTransaction()
+                .add(R.id.frameLayout, fragmentLive, "fragmentLive")
+                .commit()
     }
 
     private fun initEvent(){
@@ -110,7 +106,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     private fun showSettingRtmpUrlDialog (){
         val builder = MaterialDialog.Builder(this)
         builder.title(INPUT_URL)
-        val currentUrl:String = SPUtil.get(KEY_URL, DEFAULT_PUSH_URL) as String
+        val currentUrl:String = SPUtil.get(KEY_URL, TEST_PUSH_URL) as String
         builder.input(KEY_URL, currentUrl) { _, input ->
             SPUtil.put(KEY_URL, input.toString())
         }
@@ -182,7 +178,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
 
     private fun jumpToPush(){
         val intent = Intent(this , PushActivity::class.java)
-        intent.putExtra(KEY_URL, DEFAULT_PUSH_URL)
+        intent.putExtra(KEY_URL, TEST_PUSH_URL)
         startActivity(intent)
     }
 
