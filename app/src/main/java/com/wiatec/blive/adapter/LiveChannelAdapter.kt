@@ -26,6 +26,9 @@ class LiveChannelAdapter(private var channelList: List<ChannelInfo>):
                 holderLive.tvUserName.text = channelInfo.userInfo!!.username
                 holderLive.tvStartTime.text = channelInfo.startTime!!.substring(0,
                         channelInfo.startTime!!.length -2)
+                ImageMaster.load(channelInfo.userInfo!!.icon, holderLive.civIcon,
+                        R.drawable.holder1,
+                        R.drawable.holder1)
                 ImageMaster.load(channelInfo.preview, holderLive.ivPreview,
                         R.drawable.holder1,
                         R.drawable.holder1)
