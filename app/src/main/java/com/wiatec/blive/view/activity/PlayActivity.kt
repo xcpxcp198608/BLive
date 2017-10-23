@@ -31,7 +31,7 @@ class PlayActivity : AppCompatActivity() {
         }
         videoView.setOnErrorListener { mp, what, extra ->
             progressBar.visibility = View.GONE
-            false
+            true
         }
     }
 

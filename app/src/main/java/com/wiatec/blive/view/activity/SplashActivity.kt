@@ -3,6 +3,7 @@ package com.wiatec.blive.view.activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.Window
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.px.common.http.Bean.DownloadInfo
@@ -11,10 +12,11 @@ import com.px.common.http.Listener.DownloadListener
 import com.px.common.utils.*
 
 import com.wiatec.blive.R
+import com.wiatec.blive.instance.KEY_AUTH_PUSH_URL
 import com.wiatec.blive.instance.KEY_AUTH_TOKEN
-import com.wiatec.blive.pojo.ResultInfo
-import com.wiatec.blive.pojo.TokenInfo
-import com.wiatec.blive.pojo.UpgradeInfo
+import com.wiatec.blive.instance.KEY_AUTH_USER_ID
+import com.wiatec.blive.instance.RTMP_TOKEN
+import com.wiatec.blive.pojo.*
 import com.wiatec.blive.presenter.SplashPresenter
 
 
@@ -24,6 +26,7 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_splash)
     }
@@ -117,17 +120,40 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
 
     override fun validateToken(execute: Boolean, resultInfo: ResultInfo<TokenInfo>?) {
         if(execute && resultInfo != null){
-            if(resultInfo.code == ResultInfo.CODE_OK){
-                jumpToMain()
-            }else{
+            if(resultInfo.code != ResultInfo.CODE_OK){
                 jumpToAuth()
+                return
+            }
+        }
+        presenter!!.getPush()
+    }
+
+    override fun getPush(execute: Boolean, pushInfo: PushInfo?) {
+        if(execute && pushInfo != null) {
+            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data.push_full_url)
+            val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+            if(userId == 0){
+                EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
+            }else {
+                presenter!!.updateChannel(ChannelInfo(pushInfo.data.push_full_url,
+                        pushInfo.data.play_url, userId))
             }
         }else{
-            Thread(Runnable {
-                Thread.sleep(2000)
-                jumpToMain()
-            }).start()
+            EmojiToast.show("live server error", EmojiToast.EMOJI_SAD)
+            jumpToMain()
         }
+    }
+
+    override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
+        if(execute && resultInfo != null) {
+            Logger.d(resultInfo.toString())
+            if(resultInfo.code != ResultInfo.CODE_OK){
+                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
+            }
+        }else{
+            EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
+        }
+        jumpToMain()
     }
 
     private fun jumpToAuth(){

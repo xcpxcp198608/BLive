@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
+import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
@@ -16,11 +17,8 @@ import com.px.common.utils.EmojiToast
 import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.readystatesoftware.systembartint.SystemBarTintManager
-import com.wiatec.blive.instance.TEST_PUSH_URL
-import com.wiatec.blive.instance.INPUT_URL
-import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.R
-import com.wiatec.blive.instance.KEY_AUTH_TOKEN
+import com.wiatec.blive.instance.*
 import com.wiatec.blive.manager.PermissionManager
 import com.wiatec.blive.manager.REQUEST_CODE_AUDIO
 import com.wiatec.blive.manager.REQUEST_CODE_CAMERA
@@ -134,7 +132,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if(event!!.keyCode == KeyEvent.KEYCODE_BACK){
             if ((System.currentTimeMillis() - exitTime) > 2000) {
-                EmojiToast.show("Press back key down again exit", EmojiToast.EMOJI_SMILE)
+                EmojiToast.show(getString(R.string.exit_notice), EmojiToast.EMOJI_SMILE)
                 exitTime = System.currentTimeMillis()
                 return true
             }
@@ -176,9 +174,20 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         }
     }
 
+    private fun validateSignIn(): Boolean{
+        val token = SPUtil.get(KEY_AUTH_TOKEN, "") as String
+        if(TextUtils.isEmpty(token)){
+            return false
+        }
+        return true
+    }
+
     private fun jumpToPush(){
+        if(!validateSignIn()){
+            jumpToAuth()
+            return
+        }
         val intent = Intent(this , PushActivity::class.java)
-        intent.putExtra(KEY_URL, TEST_PUSH_URL)
         startActivity(intent)
     }
 

@@ -28,4 +28,6 @@
     <string name="switch_camera">switch_camera</string>
     <string name="play_pause">play_pause</string>
     <string name="live_title">LiveTitle</string>
+    <string name="exit_notice">Press back key down to exit</string>
+    <string name="push_url_error">Signin error, please signin again</string>
 </resources>

@@ -65,8 +65,12 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
 
     override fun onStart() {
         super.onStart()
-        pushUrl = intent.getStringExtra(KEY_URL)
-        if(TextUtils.isEmpty(pushUrl)) pushUrl = TEST_PUSH_URL
+        pushUrl = SPUtil.get(KEY_AUTH_PUSH_URL, "") as String
+        if(TextUtils.isEmpty(pushUrl)){
+            EmojiToast.show(getString(R.string.push_url_error), EmojiToast.EMOJI_SAD)
+            return
+        }
+        Logger.d(pushUrl)
         initPublish()
     }
 
@@ -76,7 +80,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         publisher!!.setRtmpHandler(RtmpHandler(this))
         publisher!!.setRecordHandler(SrsRecordHandler(this))
         publisher!!.setPreviewResolution(1280, 720)
-        publisher!!.setOutputResolution(720, 480)
+        publisher!!.setOutputResolution(640, 360)
         publisher!!.setScreenOrientation(Configuration.ORIENTATION_LANDSCAPE)
         publisher!!.setVideoHDMode()
         publisher!!.switchCameraFace(Camera.CameraInfo.CAMERA_FACING_BACK)
@@ -158,7 +162,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     }
 
     override fun onNetworkResume() {
-        EmojiToast.show("network resume", EmojiToast.EMOJI_SAD)
+        EmojiToast.show("network unstable, resume", EmojiToast.EMOJI_SAD)
     }
 
     override fun onEncodeIllegalArgumentException(e: IllegalArgumentException?) {

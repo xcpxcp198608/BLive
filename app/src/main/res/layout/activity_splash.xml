@@ -14,7 +14,7 @@
 
     <TextView
         android:layout_gravity="bottom"
-        android:text="blive"
+        android:text="@string/app_name"
         android:textSize="22sp"
         android:textColor="@android:color/white"
         android:textStyle="italic"

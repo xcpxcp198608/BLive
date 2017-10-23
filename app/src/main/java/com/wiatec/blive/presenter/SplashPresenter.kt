@@ -2,12 +2,11 @@ package com.wiatec.blive.presenter
 
 import com.px.common.utils.AppUtil
 import com.px.common.utils.Logger
-import com.wiatec.blive.model.LoadListener
-import com.wiatec.blive.model.TokenProvider
-import com.wiatec.blive.model.UpgradeProvider
-import com.wiatec.blive.pojo.ResultInfo
-import com.wiatec.blive.pojo.TokenInfo
-import com.wiatec.blive.pojo.UpgradeInfo
+import com.px.common.utils.SPUtil
+import com.wiatec.blive.instance.KEY_AUTH_USERNAME
+import com.wiatec.blive.instance.RTMP_TOKEN
+import com.wiatec.blive.model.*
+import com.wiatec.blive.pojo.*
 import com.wiatec.blive.view.activity.Splash
 
 /**
@@ -18,6 +17,8 @@ class SplashPresenter(private var splash: Splash): BasePresenter<Splash>() {
 
     private val upgradeProvider = UpgradeProvider()
     private val tokenProvider = TokenProvider()
+    private val authProvider: AuthProvider = AuthProvider()
+    private val channelProvider: ChannelProvider = ChannelProvider()
 
     fun checkUpgrade(){
         upgradeProvider.checkUpgrade(object: LoadListener<UpgradeInfo>{
@@ -51,6 +52,30 @@ class SplashPresenter(private var splash: Splash): BasePresenter<Splash>() {
             }
 
             override fun onFailure(e: String) {
+            }
+        })
+    }
+
+    fun getPush(){
+        val username = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+        authProvider.getPush(username, RTMP_TOKEN, object : LoadListener<PushInfo>{
+            override fun onSuccess(execute: Boolean, t: PushInfo?) {
+                splash.getPush(execute, t)
+            }
+
+            override fun onFailure(e: String) {
+            }
+        })
+    }
+
+    fun updateChannel(channelInfo: ChannelInfo){
+        channelProvider.updateChannel(channelInfo, object : LoadListener<ResultInfo<ChannelInfo>>{
+            override fun onSuccess(execute: Boolean, t: ResultInfo<ChannelInfo>?) {
+                splash.updateChannel(execute, t)
+            }
+
+            override fun onFailure(e: String) {
+
             }
         })
     }
