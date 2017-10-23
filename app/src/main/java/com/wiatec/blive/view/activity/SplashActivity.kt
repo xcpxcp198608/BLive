@@ -12,10 +12,7 @@ import com.px.common.http.Listener.DownloadListener
 import com.px.common.utils.*
 
 import com.wiatec.blive.R
-import com.wiatec.blive.instance.KEY_AUTH_PUSH_URL
-import com.wiatec.blive.instance.KEY_AUTH_TOKEN
-import com.wiatec.blive.instance.KEY_AUTH_USER_ID
-import com.wiatec.blive.instance.RTMP_TOKEN
+import com.wiatec.blive.instance.*
 import com.wiatec.blive.pojo.*
 import com.wiatec.blive.presenter.SplashPresenter
 

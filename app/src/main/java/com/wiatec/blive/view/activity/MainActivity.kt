@@ -6,22 +6,25 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
-import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
-import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
+import com.px.common.image.ImageMaster
 import com.px.common.utils.EmojiToast
 import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
-import com.readystatesoftware.systembartint.SystemBarTintManager
 import com.wiatec.blive.R
 import com.wiatec.blive.instance.*
 import com.wiatec.blive.manager.PermissionManager
 import com.wiatec.blive.manager.REQUEST_CODE_AUDIO
 import com.wiatec.blive.manager.REQUEST_CODE_CAMERA
+import com.wiatec.blive.pojo.ResultInfo
+import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.presenter.MainPresenter
 import com.wiatec.blive.utils.WindowUtil
 import com.wiatec.blive.view.fragment.FragmentLiveChannel
@@ -29,27 +32,22 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_layout.*
 import kotlinx.android.synthetic.main.slide_navigation.*
 import kotlinx.android.synthetic.main.tool_bar_main.*
+import org.apache.commons.io.FileUtils
+import java.io.File
 
-/**
- * http://128.1.68.58:88/get.php?username=ZHbSkeb6u1&password=X8wSsqgi1J&type=m3u&output=mpegts
- */
+
 class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickListener{
 
     private var exitTime = 0L
     private val necessaryPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     private val permissionManager = PermissionManager(necessaryPermissions)
+    private var currentFileName = ""
 
     override fun createPresenter(): MainPresenter = MainPresenter(this@MainActivity)
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-//            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-//            val systemBarTintManager = SystemBarTintManager(this)
-//            systemBarTintManager.isStatusBarTintEnabled = true
-//            systemBarTintManager.setStatusBarTintResource(R.color.colorAccent)
-//        }
         initToolBar()
         initSlideNavigation()
         initFragment()
@@ -78,6 +76,10 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         drawer_layout_main.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
         fl1.setPadding(0,WindowUtil.getStatusBarHeight(this), 0, 0)
+        val iconPath = SPUtil.get(KEY_AUTH_ICON_PATH, "") as String
+        if(!TextUtils.isEmpty(iconPath)) {
+            ImageMaster.load(this@MainActivity, iconPath, ivPerson, R.drawable.holder2, R.drawable.holder2)
+        }
     }
 
     private fun initFragment() {
@@ -117,7 +119,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
                 applyPermission()
             }
             R.id.ivPerson -> {
-
+                pickImage()
             }
             R.id.tvSetting -> {
 //                showSettingRtmpUrlDialog()
@@ -171,6 +173,51 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun pickImage(){
+        PictureSelector.create(this@MainActivity)
+                .openGallery(PictureMimeType.ofAll())
+                .maxSelectNum(1)
+                .imageSpanCount(4)
+                .previewImage(true)
+                .isZoomAnim(true)
+                .enableCrop(true)
+                .compress(true)
+                .compressMode(PictureConfig.SYSTEM_COMPRESS_MODE)
+                .withAspectRatio(4, 4)
+                .freeStyleCropEnabled(true)
+                .forResult(PictureConfig.CHOOSE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                PictureConfig.CHOOSE_REQUEST -> {
+                    val selectList = PictureSelector.obtainMultipleResult(data)
+                    val localMedia = selectList[0]
+                    val file = File(localMedia.compressPath)
+                    currentFileName = file.name
+                    val dir = getExternalFilesDir("icon")
+                    FileUtils.copyFileToDirectory(file, dir)
+                    presenter!!.uploadIcon(file)
+                    progressBar.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    override fun uploadIconCallBack(execute: Boolean, resultInfo: ResultInfo<UserInfo>?) {
+        if(execute && resultInfo != null){
+            val fileFullPath = getExternalFilesDir("icon").absolutePath + "/" + currentFileName
+            SPUtil.put(KEY_AUTH_ICON_PATH, fileFullPath)
+            Logger.d(fileFullPath)
+            ImageMaster.load(this@MainActivity, fileFullPath, ivPerson, R.drawable.holder2, R.drawable.holder2)
+            progressBar.visibility = View.GONE
+        }else{
+            EmojiToast.show("upload server error",  EmojiToast.EMOJI_SAD)
         }
     }
 

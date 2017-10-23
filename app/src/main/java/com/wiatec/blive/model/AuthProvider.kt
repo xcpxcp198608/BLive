@@ -5,12 +5,16 @@ import com.google.gson.reflect.TypeToken
 import com.px.common.http.HttpMaster
 import com.px.common.http.Listener.StringListener
 import com.px.common.utils.Logger
+import com.px.common.utils.SPUtil
+import com.wiatec.blive.instance.BASE_URL
+import com.wiatec.blive.instance.KEY_AUTH_USER_ID
 import com.wiatec.blive.instance.RTMP_TOKEN_URL
 import com.wiatec.blive.pojo.*
 import com.wiatec.blive.utils.RMaster
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 /**
  * Created by patrick on 16/10/2017.
@@ -129,6 +133,28 @@ class AuthProvider{
                     }
 
                     override fun onFailure(e: String?) {
+                        loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
+    fun uploadIcon(file: File, loadListener: LoadListener<ResultInfo<UserInfo>>){
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0)
+        HttpMaster.upload(BASE_URL + "user/upload/" + userId)
+                .file(file)
+                .enqueue(object:StringListener(){
+                    override fun onSuccess(s: String?) {
+                        if(s == null){
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
+                        val resultInfo: ResultInfo<UserInfo> = Gson().fromJson(s,
+                                object: TypeToken<ResultInfo<UserInfo>>(){}.type)
+                        loadListener.onSuccess(true, resultInfo)
+                    }
+
+                    override fun onFailure(e: String?) {
+                        Logger.d(e)
                         loadListener.onSuccess(false, null)
                     }
                 })

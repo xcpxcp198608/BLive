@@ -18,4 +18,5 @@ const val KEY_AUTH_USERNAME = "auth_username"
 const val KEY_AUTH_USER_ID = "auth_user_id"
 const val KEY_AUTH_TOKEN = "auth_token"
 const val KEY_AUTH_PUSH_URL = "auth_push_url"
+const val KEY_AUTH_ICON_PATH = "auth_icon_path"
 
