@@ -1,11 +1,12 @@
 package com.wiatec.blive.view.activity
 
-import android.content.Context
 import android.content.res.Configuration
 import android.hardware.Camera
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.faucamp.simplertmp.RtmpHandler
 import com.px.common.utils.Logger
@@ -29,13 +30,13 @@ import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.presenter.PushPresenter
 
 
-class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickListener, RtmpHandler.RtmpListener,
+class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickListener,
+        AdapterView.OnItemSelectedListener, RtmpHandler.RtmpListener,
         SrsRecordHandler.SrsRecordListener, SrsEncodeHandler.SrsEncodeListener {
 
     private var pushUrl = ""
     private var isPushing = false
     private var publisher: SrsPublisher? = null
-    private var displayOrientationListener: DisplayOrientationListener? = null
 
     override fun createPresenter(): PushPresenter = PushPresenter(this)
 
@@ -48,19 +49,27 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_push)
         initView()
+        initSpinner()
     }
 
     private fun initView() {
-        displayOrientationListener = DisplayOrientationListener(this)
-        if (displayOrientationListener!!.canDetectOrientation()) {
-            displayOrientationListener!!.enable()
-        } else {
-            displayOrientationListener!!.disable()
-        }
         ibtStart.isEnabled = false
         btConfirm.setOnClickListener(this)
         ibtStart.setOnClickListener(this)
         ibtSwitchCamera.setOnClickListener(this)
+    }
+
+    private fun initSpinner(){
+        val resolutionsAdapter = ArrayAdapter<String>(this, R.layout.spinner_item,
+                resources.getStringArray(R.array.resolutions))
+        resolutionsAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        spResolution.adapter =resolutionsAdapter
+        spResolution.onItemSelectedListener = this
+        val filtersAdapter = ArrayAdapter<String>(this, R.layout.spinner_item,
+                resources.getStringArray(R.array.filters))
+        filtersAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        spFilters.adapter = filtersAdapter
+        spFilters.onItemSelectedListener = this
     }
 
     override fun onStart() {
@@ -70,7 +79,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
             EmojiToast.show(getString(R.string.push_url_error), EmojiToast.EMOJI_SAD)
             return
         }
-        Logger.d(pushUrl)
         initPublish()
     }
 
@@ -84,8 +92,29 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         publisher!!.setScreenOrientation(Configuration.ORIENTATION_LANDSCAPE)
         publisher!!.setVideoHDMode()
         publisher!!.switchCameraFace(Camera.CameraInfo.CAMERA_FACING_BACK)
-        publisher!!.switchCameraFilter(MagicFilterType.SUNRISE)
         publisher!!.startCamera()
+    }
+
+    private fun startPush(){
+        if(publisher != null) {
+            publisher!!.startPublish(pushUrl)
+            publisher!!.startCamera()
+            isPushing = true
+        }
+    }
+
+    private fun stopPush(){
+        if(publisher != null) {
+            publisher!!.stopPublish()
+            publisher!!.stopRecord()
+            publisher!!.stopEncode()
+            isPushing = false
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopPush()
     }
 
     override fun onClick(v: View?) {
@@ -116,6 +145,37 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         }
     }
 
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        when(parent!!.id){
+            R.id.spResolution -> {
+                when(position){
+                    0 -> publisher!!.setOutputResolution(640, 360)
+                    1 -> publisher!!.setOutputResolution(720, 480)
+                    2 -> publisher!!.setOutputResolution(1280, 720)
+                }
+            }
+            R.id.spFilters -> {
+                when(position){
+                    0 -> publisher!!.switchCameraFilter(MagicFilterType.NONE)
+                    1 -> publisher!!.switchCameraFilter(MagicFilterType.COOL)
+                    2 -> publisher!!.switchCameraFilter(MagicFilterType.WARM)
+                    3 -> publisher!!.switchCameraFilter(MagicFilterType.SUNRISE)
+                    4 -> publisher!!.switchCameraFilter(MagicFilterType.SUNSET)
+                    5 -> publisher!!.switchCameraFilter(MagicFilterType.BEAUTY)
+                    6 -> publisher!!.switchCameraFilter(MagicFilterType.EARLYBIRD)
+                    7 -> publisher!!.switchCameraFilter(MagicFilterType.EVERGREEN)
+                    8 -> publisher!!.switchCameraFilter(MagicFilterType.ROMANCE)
+                    9 -> publisher!!.switchCameraFilter(MagicFilterType.TENDER)
+                    10 -> publisher!!.switchCameraFilter(MagicFilterType.VALENCIA)
+                    11 -> publisher!!.switchCameraFilter(MagicFilterType.WALDEN)
+                }
+            }
+        }
+    }
+
     override fun updateChannelName(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
         if(execute && resultInfo != null){
             Logger.d(resultInfo.toString())
@@ -128,33 +188,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         }else{
             EmojiToast.show("server error", EmojiToast.EMOJI_SAD)
         }
-    }
-
-    private fun startPush(){
-        if(publisher != null) {
-            publisher!!.startPublish(pushUrl)
-            publisher!!.startCamera()
-            isPushing = true
-        }
-    }
-
-    private fun stopPush(){
-        if(publisher != null) {
-            publisher!!.stopPublish()
-            publisher!!.stopRecord()
-            publisher!!.stopEncode()
-            isPushing = false
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        stopPush()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        displayOrientationListener!!.disable()
     }
 
     override fun onNetworkWeak() {
@@ -203,7 +236,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     }
 
     override fun onRtmpVideoStreaming() {
-        val r: Int = displayOrientationListener!!.currentOrientation
     }
 
     override fun onRtmpAudioStreaming() {
@@ -267,26 +299,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
 
     }
 
-    private class DisplayOrientationListener(context: Context) : OrientationEventListener(context) {
-
-        var currentOrientation = 0
-
-        override fun onOrientationChanged(orientation: Int) {
-            if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-                return
-            }
-            if (orientation > 350 || orientation < 10) {
-                currentOrientation = 0
-            } else if (orientation in 81..99) {
-                currentOrientation = 90
-            } else if (orientation in 171..189) {
-                currentOrientation = 180
-            } else if (orientation in 261..279) {
-                currentOrientation = 270
-            }
-        }
-    }
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if(isPushing) {
@@ -301,9 +313,8 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                 .title(R.string.notice)
                 .content(R.string.stop_publish)
                 .positiveText(R.string.confirm)
-                .onPositive { dialog, which ->
+                .onPositive { _, _ ->
                     stopPush()
-                    displayOrientationListener!!.disable()
                     finish()
                 }
                 .show()

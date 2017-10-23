@@ -146,7 +146,6 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
 
     override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
         if(execute && resultInfo != null) {
-            Logger.d(resultInfo.toString())
             if(resultInfo.code != ResultInfo.CODE_OK){
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }

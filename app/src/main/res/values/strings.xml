@@ -30,4 +30,24 @@
     <string name="live_title">LiveTitle</string>
     <string name="exit_notice">Press back key down to exit</string>
     <string name="push_url_error">Signin error, please signin again</string>
+
+    <array name="resolutions">
+        <item>360P</item>
+        <item>480P</item>
+        <item>720P</item>
+    </array>
+    <array name="filters">
+        <item>NONE</item>
+        <item>COOL</item>
+        <item>WARM</item>
+        <item>SUNRISE</item>
+        <item>SUNSET</item>
+        <item>BEAUTY</item>
+        <item>EARLYBIRD</item>
+        <item>EVERGREEN</item>
+        <item>ROMANCE</item>
+        <item>TENDER</item>
+        <item>VALENCIA</item>
+        <item>WALDEN</item>
+    </array>
 </resources>
