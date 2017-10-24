@@ -26,6 +26,7 @@ import com.wiatec.blive.manager.REQUEST_CODE_CAMERA
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.presenter.MainPresenter
+import com.wiatec.blive.task.DownloadUserIcon
 import com.wiatec.blive.utils.WindowUtil
 import com.wiatec.blive.view.fragment.FragmentLiveChannel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -52,6 +53,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         initSlideNavigation()
         initFragment()
         initEvent()
+        Executor.executorService.execute(DownloadUserIcon())
     }
 
     private fun initToolBar() {
@@ -78,7 +80,10 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         fl1.setPadding(0,WindowUtil.getStatusBarHeight(this), 0, 0)
         val iconPath = SPUtil.get(KEY_AUTH_ICON_PATH, "") as String
         if(!TextUtils.isEmpty(iconPath)) {
-            ImageMaster.load(this@MainActivity, iconPath, ivPerson, R.drawable.holder2, R.drawable.holder2)
+            ImageMaster.load(this@MainActivity, iconPath, ivPerson, R.drawable.holder_icon, R.drawable.holder_icon)
+        }else{
+            val iconUrl = SPUtil.get(KEY_AUTH_ICON_URL, "") as String
+            ImageMaster.load(this@MainActivity, iconUrl, ivPerson, R.drawable.holder_icon, R.drawable.holder_icon)
         }
     }
 
@@ -179,6 +184,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     private fun pickImage(){
         PictureSelector.create(this@MainActivity)
                 .openGallery(PictureMimeType.ofAll())
+                .theme(R.style.PickerStyle)
                 .maxSelectNum(1)
                 .imageSpanCount(4)
                 .previewImage(true)
@@ -214,7 +220,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
             val fileFullPath = getExternalFilesDir("icon").absolutePath + "/" + currentFileName
             SPUtil.put(KEY_AUTH_ICON_PATH, fileFullPath)
             Logger.d(fileFullPath)
-            ImageMaster.load(this@MainActivity, fileFullPath, ivPerson, R.drawable.holder2, R.drawable.holder2)
+            ImageMaster.load(this@MainActivity, fileFullPath, ivPerson, R.drawable.holder_icon, R.drawable.holder_icon)
             progressBar.visibility = View.GONE
         }else{
             EmojiToast.show("upload server error",  EmojiToast.EMOJI_SAD)

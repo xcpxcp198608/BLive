@@ -6,8 +6,9 @@
 
     <TextView
         android:layout_marginTop="8dp"
-        android:text="Consent"
+        android:text="consent"
         android:textSize="22sp"
+        android:textColor="@color/colorAccent"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -16,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="@android:color/black"
+        android:background="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 

@@ -23,7 +23,7 @@
             android:id="@+id/ivPerson"
             app:civ_border_color="@android:color/holo_orange_dark"
             app:civ_border_width="2dp"
-            android:src="@drawable/img_person"
+            android:src="@drawable/holder_icon"
             android:layout_width="150dp"
             android:layout_height="150dp" />
 

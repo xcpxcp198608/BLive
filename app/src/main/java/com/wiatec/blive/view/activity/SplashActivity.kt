@@ -15,6 +15,7 @@ import com.wiatec.blive.R
 import com.wiatec.blive.instance.*
 import com.wiatec.blive.pojo.*
 import com.wiatec.blive.presenter.SplashPresenter
+import com.wiatec.blive.task.DownloadUserIcon
 
 
 class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {

@@ -27,11 +27,11 @@ class LiveChannelAdapter(private var channelList: List<ChannelInfo>):
                 holderLive.tvStartTime.text = channelInfo.startTime!!.substring(0,
                         channelInfo.startTime!!.length -2)
                 ImageMaster.load(channelInfo.userInfo!!.icon, holderLive.civIcon,
-                        R.drawable.holder1,
-                        R.drawable.holder1)
+                        R.drawable.holder_icon,
+                        R.drawable.holder_icon)
                 ImageMaster.load(channelInfo.preview, holderLive.ivPreview,
-                        R.drawable.holder1,
-                        R.drawable.holder1)
+                        R.drawable.holder_preview,
+                        R.drawable.holder_preview)
             }
         }catch (e: Exception){
             Logger.d(e.message)

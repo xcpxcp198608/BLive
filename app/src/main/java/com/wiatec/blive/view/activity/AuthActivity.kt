@@ -261,7 +261,8 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                     SPUtil.put(KEY_AUTH_TOKEN, resultInfo.t!!.token)
                     if(resultInfo.t!!.userInfo != null) {
                         SPUtil.put(KEY_AUTH_USERNAME, resultInfo.t!!.userInfo!!.username)
-                        SPUtil.put(KEY_AUTH_USER_ID, resultInfo.t!!.userInfo!!.id)
+                        SPUtil.put(KEY_AUTH_USER_ID, resultInfo.t!!.userId)
+                        SPUtil.put(KEY_AUTH_ICON_URL, resultInfo.t!!.userInfo!!.icon)
                     }
                 }
                 presenter!!.getPush(resultInfo.t!!.userInfo!!.username!!, RTMP_TOKEN)
@@ -290,7 +291,6 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
 
     override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
         if(execute && resultInfo != null) {
-            Logger.d(resultInfo.toString())
             if(resultInfo.code != ResultInfo.CODE_OK){
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }

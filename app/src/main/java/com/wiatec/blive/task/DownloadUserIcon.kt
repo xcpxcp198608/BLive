@@ -6,6 +6,8 @@ import com.px.common.http.HttpMaster
 import com.px.common.http.Listener.DownloadListener
 import com.px.common.http.Listener.StringListener
 import com.px.common.utils.CommonApplication
+import com.px.common.utils.FileUtil
+import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.wiatec.blive.instance.KEY_AUTH_ICON_PATH
 import com.wiatec.blive.instance.KEY_AUTH_USER_ID
@@ -30,7 +32,7 @@ class DownloadUserIcon: Runnable {
     private fun execute(){
         val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
         if(userId <= 0 )return
-        val iconPath = SPUtil.get(KEY_AUTH_ICON_PATH, 0) as String
+        val iconPath = SPUtil.get(KEY_AUTH_ICON_PATH, "") as String
         if(!TextUtils.isEmpty(iconPath)){
             val file = File(iconPath)
             if(file.exists()){
@@ -42,6 +44,7 @@ class DownloadUserIcon: Runnable {
                 .enqueue(object : Callback<UserInfo>{
                     override fun onResponse(call: Call<UserInfo>?, response: Response<UserInfo>?) {
                         val userInfo = response!!.body() ?: return
+                        Logger.d(userInfo.toString())
                         downloadIcon(userInfo.icon!!)
                     }
 
@@ -55,7 +58,7 @@ class DownloadUserIcon: Runnable {
     private fun downloadIcon(url: String){
         HttpMaster.download(CommonApplication.context)
                 .url(url)
-                .path(CommonApplication.context.getExternalFilesDir("icon").absolutePath)
+                .path(FileUtil.getPathWith("icon"))
                 .startDownload(object: DownloadListener{
                     override fun onPending(downloadInfo: DownloadInfo?) {
                     }
