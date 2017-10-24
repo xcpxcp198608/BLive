@@ -57,6 +57,11 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         Executor.executorService.execute(DownloadUserIcon())
     }
 
+    override fun onStart() {
+        super.onStart()
+        presenter!!.updateChannelStatus(DEACTIVATE)
+    }
+
     private fun initToolBar() {
         val paddingTop = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT )
             WindowUtil.getStatusBarHeight(this) else 0

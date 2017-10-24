@@ -1,7 +1,11 @@
 package com.wiatec.blive.presenter
 
+import com.px.common.utils.SPUtil
+import com.wiatec.blive.instance.KEY_AUTH_USER_ID
 import com.wiatec.blive.model.AuthProvider
+import com.wiatec.blive.model.ChannelProvider
 import com.wiatec.blive.model.LoadListener
+import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.view.activity.Main
@@ -14,6 +18,7 @@ import java.io.File
 class MainPresenter(var main: Main): BasePresenter<Main>() {
 
     private val authProvider: AuthProvider = AuthProvider()
+    private val channelProvider: ChannelProvider = ChannelProvider()
 
     fun deactivateChannel(){
 
@@ -26,6 +31,19 @@ class MainPresenter(var main: Main): BasePresenter<Main>() {
             }
 
             override fun onFailure(e: String) {
+            }
+        })
+    }
+
+    fun updateChannelStatus(activate: Int){
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        channelProvider.updateChannelStatus(activate, userId, object : LoadListener<ResultInfo<ChannelInfo>>{
+            override fun onSuccess(execute: Boolean, t: ResultInfo<ChannelInfo>?) {
+
+            }
+
+            override fun onFailure(e: String) {
+
             }
         })
     }
