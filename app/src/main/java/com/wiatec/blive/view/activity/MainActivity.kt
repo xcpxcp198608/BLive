@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
-import com.afollestad.materialdialogs.MaterialDialog
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
@@ -27,6 +26,7 @@ import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.presenter.MainPresenter
 import com.wiatec.blive.task.DownloadUserIcon
+import com.wiatec.blive.utils.AuthUtils
 import com.wiatec.blive.utils.WindowUtil
 import com.wiatec.blive.view.fragment.FragmentLiveChannel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -40,7 +40,8 @@ import java.io.File
 class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickListener{
 
     private var exitTime = 0L
-    private val necessaryPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+    private val necessaryPermissions = arrayOf(Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO)
     private val permissionManager = PermissionManager(necessaryPermissions)
     private var currentFileName = ""
 
@@ -78,13 +79,18 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         drawer_layout_main.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
         fl1.setPadding(0,WindowUtil.getStatusBarHeight(this), 0, 0)
+        if(!AuthUtils.isSignin()) return
         val iconPath = SPUtil.get(KEY_AUTH_ICON_PATH, "") as String
         if(!TextUtils.isEmpty(iconPath)) {
-            ImageMaster.load(this@MainActivity, iconPath, ivPerson, R.drawable.holder_icon, R.drawable.holder_icon)
+            ImageMaster.load(this@MainActivity, iconPath, ivPerson, R.drawable.img_holder_icon,
+                    R.drawable.img_error_icon)
         }else{
             val iconUrl = SPUtil.get(KEY_AUTH_ICON_URL, "") as String
-            ImageMaster.load(this@MainActivity, iconUrl, ivPerson, R.drawable.holder_icon, R.drawable.holder_icon)
+            ImageMaster.load(this@MainActivity, iconUrl, ivPerson, R.drawable.img_holder_icon,
+                    R.drawable.img_error_icon)
         }
+        val username = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+        if(!TextUtils.isEmpty(username)) tvNoSignin.text = username
     }
 
     private fun initFragment() {
@@ -108,30 +114,30 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         window.setContentView(R.layout.dialog_consent)
     }
 
-    private fun showSettingRtmpUrlDialog (){
-        val builder = MaterialDialog.Builder(this)
-        builder.title(INPUT_URL)
-        val currentUrl:String = SPUtil.get(KEY_URL, TEST_PUSH_URL) as String
-        builder.input(KEY_URL, currentUrl) { _, input ->
-            SPUtil.put(KEY_URL, input.toString())
-        }
-        builder.show()
-    }
-
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.btFloatingAction -> {
                 applyPermission()
             }
             R.id.ivPerson -> {
-                pickImage()
+                if(AuthUtils.isSignin()){
+                    pickImage()
+                }else{
+                    jumpToAuth()
+                }
             }
             R.id.tvSetting -> {
-//                showSettingRtmpUrlDialog()
+                if(AuthUtils.isSignin()) {
+                    jumpToSettings()
+                }else{
+                    jumpToAuth()
+                }
             }
             R.id.tvSignOut -> {
-                SPUtil.put(KEY_AUTH_TOKEN, "")
-                jumpToAuth()
+                if(AuthUtils.isSignin()) {
+                    SPUtil.put(KEY_AUTH_TOKEN, "")
+                    jumpToAuth()
+                }
             }
         }
     }
@@ -157,10 +163,12 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         jumpToPush()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
         when(requestCode){
             REQUEST_CODE_CAMERA -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                        PackageManager.PERMISSION_GRANTED){
                     if(permissionManager.checkPermission(this@MainActivity)){
                         jumpToPush()
                     }else{
@@ -169,7 +177,8 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
                 }
             }
             REQUEST_CODE_AUDIO -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                        PackageManager.PERMISSION_GRANTED){
                     if(permissionManager.checkPermission(this@MainActivity)){
                         jumpToPush()
                     }else{
@@ -183,7 +192,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
 
     private fun pickImage(){
         PictureSelector.create(this@MainActivity)
-                .openGallery(PictureMimeType.ofAll())
+                .openGallery(PictureMimeType.ofImage())
                 .theme(R.style.PickerStyle)
                 .maxSelectNum(1)
                 .imageSpanCount(4)
@@ -220,7 +229,8 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
             val fileFullPath = getExternalFilesDir("icon").absolutePath + "/" + currentFileName
             SPUtil.put(KEY_AUTH_ICON_PATH, fileFullPath)
             Logger.d(fileFullPath)
-            ImageMaster.load(this@MainActivity, fileFullPath, ivPerson, R.drawable.holder_icon, R.drawable.holder_icon)
+            ImageMaster.load(this@MainActivity, fileFullPath, ivPerson, R.drawable.img_holder_icon,
+                    R.drawable.img_error_icon)
             progressBar.visibility = View.GONE
         }else{
             EmojiToast.show("upload server error",  EmojiToast.EMOJI_SAD)
@@ -248,6 +258,11 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         val intent = Intent(this , AuthActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun jumpToSettings(){
+        val intent = Intent(this , UserSettingsActivity::class.java)
+        startActivity(intent)
     }
 
 }

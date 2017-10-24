@@ -14,11 +14,11 @@ import com.bumptech.glide.Glide
 /**
  * activity extension function -- showAlertDialog
  */
-fun Activity.showAlertDialog(title: String, message: String) {
-    val dialog: Dialog = Dialog(this)
-    val window = dialog.window
-}
-
-fun ImageView.loadUrl(url: String, placeHolder: Int, error: Int){
-
-}
+//fun Activity.showAlertDialog(title: String, message: String) {
+//    val dialog: Dialog = Dialog(this)
+//    val window = dialog.window
+//}
+//
+//fun ImageView.loadUrl(url: String, placeHolder: Int, error: Int){
+//
+//}

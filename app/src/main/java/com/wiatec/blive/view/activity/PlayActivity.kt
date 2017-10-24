@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import com.px.common.utils.EmojiToast
 import com.px.common.utils.Logger
 
 import com.wiatec.blive.R
@@ -29,8 +30,9 @@ class PlayActivity : AppCompatActivity() {
             progressBar.visibility = View.GONE
             videoView.start()
         }
-        videoView.setOnErrorListener { mp, what, extra ->
+        videoView.setOnErrorListener { _, _, _ ->
             progressBar.visibility = View.GONE
+            EmojiToast.show("missing live information, press back and try again", EmojiToast.EMOJI_SAD)
             true
         }
     }

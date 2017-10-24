@@ -79,4 +79,8 @@ class SplashPresenter(private var splash: Splash): BasePresenter<Splash>() {
             }
         })
     }
+
+    fun updateUserInfo(){
+        authProvider.updateUserInfo()
+    }
 }

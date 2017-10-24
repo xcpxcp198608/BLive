@@ -51,7 +51,7 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
                 .content(upgradeInfo.info)
                 .positiveText("upgrade")
                 .cancelable(false)
-                .onPositive { dialog, which ->
+                .onPositive { dialog, _ ->
                     showDownloadDialog(upgradeInfo)
                     dialog.dismiss()
                 }
@@ -123,18 +123,19 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
                 return
             }
         }
+        presenter!!.updateUserInfo()
         presenter!!.getPush()
     }
 
     override fun getPush(execute: Boolean, pushInfo: PushInfo?) {
         if(execute && pushInfo != null) {
-            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data.push_full_url)
+            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data!!.push_full_url)
             val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
             if(userId == 0){
                 EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
             }else {
-                presenter!!.updateChannel(ChannelInfo(pushInfo.data.push_full_url,
-                        pushInfo.data.play_url, userId))
+                presenter!!.updateChannel(ChannelInfo(pushInfo.data!!.push_full_url!!,
+                        pushInfo.data!!.play_url!!, userId))
             }
         }else{
             EmojiToast.show("live server error", EmojiToast.EMOJI_SAD)

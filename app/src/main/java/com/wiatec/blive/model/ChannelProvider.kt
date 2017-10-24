@@ -1,13 +1,22 @@
 package com.wiatec.blive.model
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.px.common.http.HttpMaster
+import com.px.common.http.Listener.StringListener
 import com.px.common.utils.Logger
+import com.px.common.utils.SPUtil
+import com.wiatec.blive.instance.BASE_URL
+import com.wiatec.blive.instance.KEY_AUTH_USER_ID
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.pojo.TokenInfo
+import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.utils.RMaster
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 /**
  * Created by patrick on 16/10/2017.
@@ -104,6 +113,32 @@ class ChannelProvider {
 
                     override fun onFailure(call: Call<ResultInfo<ChannelInfo>>?, t: Throwable?) {
                         if (t?.message != null) Logger.d(t.message)
+                        loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
+    fun uploadPreviewImage(file: File, loadListener: LoadListener<ResultInfo<ChannelInfo>>){
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        if(userId <= 0 ) {
+            loadListener.onSuccess(false, null)
+            return
+        }
+        HttpMaster.upload(BASE_URL + "channel/upload/" + userId)
+                .file(file)
+                .enqueue(object: StringListener(){
+                    override fun onSuccess(s: String?) {
+                        if(s == null){
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
+                        val resultInfo: ResultInfo<ChannelInfo> = Gson().fromJson(s,
+                                object: TypeToken<ResultInfo<ChannelInfo>>(){}.type)
+                        loadListener.onSuccess(true, resultInfo)
+                    }
+
+                    override fun onFailure(e: String?) {
+                        Logger.d(e)
                         loadListener.onSuccess(false, null)
                     }
                 })

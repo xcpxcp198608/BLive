@@ -7,7 +7,7 @@
     tools:context="com.wiatec.blive.view.activity.SplashActivity">
 
     <ImageView
-        android:src="@drawable/bg3"
+        android:src="@drawable/bg_main"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

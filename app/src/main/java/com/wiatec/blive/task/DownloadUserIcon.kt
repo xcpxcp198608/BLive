@@ -10,6 +10,8 @@ import com.px.common.utils.FileUtil
 import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.wiatec.blive.instance.KEY_AUTH_ICON_PATH
+import com.wiatec.blive.instance.KEY_AUTH_ICON_URL
+import com.wiatec.blive.instance.KEY_AUTH_PREVIEW_URL
 import com.wiatec.blive.instance.KEY_AUTH_USER_ID
 import com.wiatec.blive.model.AuthService
 import com.wiatec.blive.pojo.UserInfo
@@ -44,7 +46,8 @@ class DownloadUserIcon: Runnable {
                 .enqueue(object : Callback<UserInfo>{
                     override fun onResponse(call: Call<UserInfo>?, response: Response<UserInfo>?) {
                         val userInfo = response!!.body() ?: return
-                        Logger.d(userInfo.toString())
+                        SPUtil.put(KEY_AUTH_ICON_URL, userInfo.icon!!)
+                        SPUtil.put(KEY_AUTH_PREVIEW_URL, userInfo.channelInfo!!.preview!!)
                         downloadIcon(userInfo.icon!!)
                     }
 

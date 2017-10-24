@@ -6,9 +6,7 @@ import com.px.common.http.HttpMaster
 import com.px.common.http.Listener.StringListener
 import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
-import com.wiatec.blive.instance.BASE_URL
-import com.wiatec.blive.instance.KEY_AUTH_USER_ID
-import com.wiatec.blive.instance.RTMP_TOKEN_URL
+import com.wiatec.blive.instance.*
 import com.wiatec.blive.pojo.*
 import com.wiatec.blive.utils.RMaster
 import retrofit2.Call
@@ -139,7 +137,8 @@ class AuthProvider{
     }
 
     fun uploadIcon(file: File, loadListener: LoadListener<ResultInfo<UserInfo>>){
-        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0)
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        if(userId <= 0 ) return
         HttpMaster.upload(BASE_URL + "user/upload/" + userId)
                 .file(file)
                 .enqueue(object:StringListener(){
@@ -156,6 +155,29 @@ class AuthProvider{
                     override fun onFailure(e: String?) {
                         Logger.d(e)
                         loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
+    fun updateUserInfo(){
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        if(userId <= 0 ) return
+        RMaster.retrofit.create(AuthService::class.java)
+                .user(userId)
+                .enqueue(object : Callback<UserInfo>{
+                    override fun onResponse(call: Call<UserInfo>?, response: Response<UserInfo>?) {
+                        if(response == null) return
+                        val userInfo = response.body()
+                        if(userInfo != null){
+                            SPUtil.put(KEY_AUTH_USERNAME, userInfo.username)
+                            SPUtil.put(KEY_AUTH_ICON_URL, userInfo.icon)
+                            SPUtil.put(KEY_AUTH_PREVIEW_URL, userInfo.channelInfo!!.preview)
+                            SPUtil.put(KEY_AUTH_PUSH_URL, userInfo.channelInfo!!.url)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<UserInfo>?, t: Throwable?) {
+                        if (t?.message != null) Logger.d(t.message)
                     }
                 })
     }

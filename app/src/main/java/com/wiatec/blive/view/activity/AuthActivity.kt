@@ -252,9 +252,6 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     }
 
     override fun signIn(execute: Boolean, resultInfo: ResultInfo<TokenInfo>?) {
-        progressBarSignIn.visibility = View.GONE
-        btSignIn.isEnabled = true
-        btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null){
             if(resultInfo.code == ResultInfo.CODE_OK){
                 if(resultInfo.t != null) {
@@ -270,26 +267,35 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
         }else{
+            progressBarSignIn.visibility = View.GONE
+            btSignIn.isEnabled = true
+            btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
             EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
         }
     }
 
     override fun getPush(execute: Boolean, pushInfo: PushInfo?) {
         if(execute && pushInfo != null) {
-            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data.push_full_url)
+            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data!!.push_full_url)
             val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
             if(userId == 0){
                 EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
             }else {
-                presenter!!.updateChannel(ChannelInfo(pushInfo.data.push_full_url,
-                        pushInfo.data.play_url, userId))
+                presenter!!.updateChannel(ChannelInfo(pushInfo.data!!.push_full_url!!,
+                        pushInfo.data!!.play_url!!, userId))
             }
         }else{
+            progressBarSignIn.visibility = View.GONE
+            btSignIn.isEnabled = true
+            btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
             EmojiToast.show("live server error", EmojiToast.EMOJI_SAD)
         }
     }
 
     override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
+        progressBarSignIn.visibility = View.GONE
+        btSignIn.isEnabled = true
+        btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
         if(execute && resultInfo != null) {
             if(resultInfo.code != ResultInfo.CODE_OK){
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)

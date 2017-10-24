@@ -3,7 +3,9 @@ package com.wiatec.blive.model
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.http.*
+import java.io.File
 
 /**
  * Created by patrick on 17/10/2017.
@@ -23,6 +25,6 @@ interface ChannelService {
     fun updateChannelName(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
 
     @PUT("channel/status/{activate}/{userId}")
-    fun updateChannelStatus(@Path("activate") activate:Int,  @Path("userId")userId: Int): Call<ResultInfo<ChannelInfo>>
-
+    fun updateChannelStatus(@Path("activate") activate:Int,  @Path("userId")userId: Int):
+            Call<ResultInfo<ChannelInfo>>
 }
