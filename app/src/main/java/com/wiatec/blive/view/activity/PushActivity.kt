@@ -186,7 +186,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
         }else{
-            EmojiToast.show("server error", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("network unstable", EmojiToast.EMOJI_SAD)
         }
     }
 
@@ -195,7 +195,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     }
 
     override fun onNetworkResume() {
-        EmojiToast.show("network unstable, resume", EmojiToast.EMOJI_SAD)
+        EmojiToast.show("network unstable", EmojiToast.EMOJI_SAD)
     }
 
     override fun onEncodeIllegalArgumentException(e: IllegalArgumentException?) {

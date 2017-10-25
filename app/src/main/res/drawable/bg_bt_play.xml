@@ -3,5 +3,6 @@
     <item android:drawable="@drawable/ic_play_circle_outline_pink_800_48dp" android:state_pressed="true"/>
     <item android:drawable="@drawable/ic_play_circle_outline_pink_800_48dp" android:state_selected="true"/>
     <item android:drawable="@drawable/ic_play_circle_outline_pink_800_48dp" android:state_focused="true"/>
+    <item android:drawable="@drawable/ic_play_circle_outline_blue_grey_400_48dp" android:state_enabled="false"/>
     <item android:drawable="@drawable/ic_play_circle_outline_pink_400_48dp"/>
 </selector>

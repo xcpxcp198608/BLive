@@ -11,78 +11,87 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:id="@+id/llSetting"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp"
-        android:orientation="vertical"
-        android:layout_gravity="center"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/etChannelTitle"
-            android:hint="@string/live_title"
-            tools:text="fdsfsdf"
-            android:textColorHint="@color/colorGray"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/btConfirm"
-            android:layout_marginTop="10dp"
-            android:textAllCaps="false"
-            android:text="@string/confirm"
-            android:background="@drawable/bg_bt_auth"
-            android:textColor="@android:color/white"
+        <ImageButton
+            android:id="@+id/ibtSwitchCamera"
+            android:layout_margin="6dp"
             android:layout_gravity="right"
-            android:textSize="14sp"
-            android:padding="5dp"
+            android:background="@drawable/bg_bt_switch_camera"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/switch_camera" />
 
-    </LinearLayout>
+        <Spinner
+            android:background="@drawable/bg_bt_auth"
+            android:id="@+id/spResolution"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="55dp"
+            android:layout_gravity="right"
+            android:padding="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    <ImageButton
-        android:layout_margin="5dp"
-        android:id="@+id/ibtSwitchCamera"
-        android:elevation="8dp"
-        android:background="@drawable/bg_bt_switch_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/switch_camera" />
+        <Spinner
+            android:background="@drawable/bg_bt_auth"
+            android:id="@+id/spFilters"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="115dp"
+            android:layout_gravity="right"
+            android:padding="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    <Spinner
-        android:background="@drawable/bg_bt_auth"
-        android:id="@+id/spResolution"
-        android:layout_margin="10dp"
-        android:layout_gravity="right"
-        android:padding="0dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <ImageButton
+            android:id="@+id/ibtStart"
+            android:layout_margin="10dp"
+            android:elevation="8dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@drawable/bg_bt_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/play_pause" />
 
-    <Spinner
-        android:background="@drawable/bg_bt_auth"
-        android:id="@+id/spFilters"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="65dp"
-        android:layout_gravity="right"
-        android:padding="0dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/llSetting"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/ibtStart"
-        android:layout_margin="10dp"
-        android:elevation="8dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:background="@drawable/bg_bt_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/play_pause" />
+            <EditText
+                android:id="@+id/etChannelTitle"
+                android:hint="@string/live_title"
+                tools:text="fdsfsdf"
+                android:textColorHint="@color/colorGray"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btConfirm"
+                android:layout_marginTop="10dp"
+                android:textAllCaps="false"
+                android:text="@string/confirm"
+                android:background="@drawable/bg_bt_auth"
+                android:textColor="@android:color/white"
+                android:layout_gravity="right"
+                android:textSize="14sp"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </FrameLayout>
