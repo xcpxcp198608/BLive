@@ -80,7 +80,7 @@ class UserSettingsActivity : BaseActivity<UserSettings, UserSettingsPresenter>()
                 .enableCrop(true)
                 .compress(true)
                 .compressMode(PictureConfig.SYSTEM_COMPRESS_MODE)
-                .withAspectRatio(16, 9)
+                .withAspectRatio(7, 5)
                 .freeStyleCropEnabled(true)
                 .forResult(PictureConfig.CHOOSE_REQUEST)
     }
