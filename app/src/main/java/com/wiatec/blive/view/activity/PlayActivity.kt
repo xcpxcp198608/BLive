@@ -32,7 +32,7 @@ class PlayActivity : AppCompatActivity() {
         }
         videoView.setOnErrorListener { _, _, _ ->
             progressBar.visibility = View.GONE
-            EmojiToast.show("missing live information, press back and try again", EmojiToast.EMOJI_SAD)
+            play(url)
             true
         }
     }

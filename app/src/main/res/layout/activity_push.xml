@@ -46,7 +46,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:id="@+id/ibtSwitchCamera"
         android:elevation="8dp"
         android:background="@drawable/bg_bt_switch_camera"

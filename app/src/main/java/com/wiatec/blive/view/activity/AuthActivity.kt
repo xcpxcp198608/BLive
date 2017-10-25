@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
+import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.px.common.utils.*
 
@@ -99,27 +101,21 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 val userInfo = checkSignUpInput()
                 if(userInfo != null) {
                     presenter!!.signUp(userInfo)
-                    btSignUp.isEnabled = false
-                    btSignUp.setBackgroundResource(R.drawable.bg_bt_auth_disabled)
-                    progressBarSignUp.visibility = View.VISIBLE
+                    disableButton(btSignUp, progressBarSignUp)
                 }
             }
             R.id.btSignIn -> {
                 val userInfo = checkSignInInput()
                 if(userInfo != null) {
                     presenter!!.signIn(userInfo)
-                    btSignIn.isEnabled = false
-                    btSignIn.setBackgroundResource(R.drawable.bg_bt_auth_disabled)
-                    progressBarSignIn.visibility = View.VISIBLE
+                    disableButton(btSignIn, progressBarSignIn)
                 }
             }
             R.id.btReset -> {
                 val userInfo = checkResetInput()
                 if(userInfo != null) {
                     presenter!!.resetPassword(userInfo)
-                    btReset.isEnabled = false
-                    btReset.setBackgroundResource(R.drawable.bg_bt_auth_disabled)
-                    progressBarReset.visibility = View.VISIBLE
+                    disableButton(btReset, progressBarReset)
                 }
             }
         }
@@ -233,9 +229,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     }
 
     override fun signUp(execute: Boolean, resultInfo: ResultInfo<UserInfo>?) {
-        progressBarSignUp.visibility = View.GONE
-        btSignUp.isEnabled = true
-        btSignUp.setBackgroundResource(R.drawable.bg_bt_auth)
+        enableButton(btSignUp, progressBarSignUp)
         if(execute && resultInfo != null){
             if(resultInfo.code == ResultInfo.CODE_OK){
                 if(resultInfo.t != null) {
@@ -264,12 +258,11 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 }
                 presenter!!.getPush(resultInfo.t!!.userInfo!!.username!!, RTMP_TOKEN)
             }else {
+                enableButton(btSignIn, progressBarSignIn)
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
         }else{
-            progressBarSignIn.visibility = View.GONE
-            btSignIn.isEnabled = true
-            btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
+            enableButton(btSignIn, progressBarSignIn)
             EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
         }
     }
@@ -285,17 +278,13 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                         pushInfo.data!!.play_url!!, userId))
             }
         }else{
-            progressBarSignIn.visibility = View.GONE
-            btSignIn.isEnabled = true
-            btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
+            enableButton(btSignIn, progressBarSignIn)
             EmojiToast.show("live server error", EmojiToast.EMOJI_SAD)
         }
     }
 
     override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
-        progressBarSignIn.visibility = View.GONE
-        btSignIn.isEnabled = true
-        btSignIn.setBackgroundResource(R.drawable.bg_bt_auth)
+        enableButton(btSignIn, progressBarSignIn)
         if(execute && resultInfo != null) {
             if(resultInfo.code != ResultInfo.CODE_OK){
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
@@ -307,9 +296,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     }
 
     override fun resetPassword(execute: Boolean, resultInfo: ResultInfo<UserInfo>?) {
-        progressBarReset.visibility = View.GONE
-        btReset.isEnabled = true
-        btReset.setBackgroundResource(R.drawable.bg_bt_auth)
+        enableButton(btReset, progressBarReset)
         if(execute && resultInfo != null){
             if(resultInfo.code == ResultInfo.CODE_OK){
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SMILE)
@@ -320,6 +307,18 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
         }else{
             EmojiToast.show("reset failure", EmojiToast.EMOJI_SAD)
         }
+    }
+
+    private fun enableButton(bt: Button, pb: ProgressBar){
+        pb.visibility = View.GONE
+        bt.isEnabled = true
+        bt.setBackgroundResource(R.drawable.bg_bt_auth)
+    }
+
+    private fun disableButton(bt: Button, pb: ProgressBar){
+        bt.isEnabled = false
+        bt.setBackgroundResource(R.drawable.bg_bt_auth_disabled)
+        pb.visibility = View.VISIBLE
     }
 
     private fun jumpToMain(){

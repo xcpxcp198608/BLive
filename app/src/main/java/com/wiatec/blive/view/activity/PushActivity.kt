@@ -87,8 +87,8 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         publisher!!.setEncodeHandler(SrsEncodeHandler(this))
         publisher!!.setRtmpHandler(RtmpHandler(this))
         publisher!!.setRecordHandler(SrsRecordHandler(this))
-        publisher!!.setPreviewResolution(1280, 720)
-        publisher!!.setOutputResolution(640, 360)
+        publisher!!.setPreviewResolution(720, 480)
+        publisher!!.setOutputResolution(480, 240)
         publisher!!.setScreenOrientation(Configuration.ORIENTATION_LANDSCAPE)
         publisher!!.setVideoHDMode()
         publisher!!.switchCameraFace(Camera.CameraInfo.CAMERA_FACING_BACK)
@@ -152,9 +152,9 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         when(parent!!.id){
             R.id.spResolution -> {
                 when(position){
-                    0 -> publisher!!.setOutputResolution(640, 360)
-                    1 -> publisher!!.setOutputResolution(720, 480)
-                    2 -> publisher!!.setOutputResolution(1280, 720)
+                    0 -> publisher!!.setOutputResolution(480, 240) //18s
+                    1 -> publisher!!.setOutputResolution(640, 360) //25s
+                    2 -> publisher!!.setOutputResolution(720, 480)
                 }
             }
             R.id.spFilters -> {
