@@ -90,7 +90,7 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
                         progressDialog.setProgress(100)
                         progressDialog.dismiss()
                         if(AppUtil.isApkCanInstall(downloadInfo!!.path, downloadInfo.name)){
-                            AppUtil.installApk(downloadInfo.path, downloadInfo.name)
+                            AppUtil.installApk(downloadInfo.path, downloadInfo.name, "com.wiatec.blive.fileprovider")
                         }else{
                             if(FileUtil.isExists(downloadInfo.path, downloadInfo.name)){
                                 FileUtil.delete(downloadInfo.path, downloadInfo.name)
