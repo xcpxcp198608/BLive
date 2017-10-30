@@ -104,7 +104,7 @@ class ChannelProvider {
                         }
                         val resultInfo = response.body()
                         if(resultInfo != null){
-                            Logger.d(resultInfo.toString())
+//                            Logger.d(resultInfo.toString())
                             loadListener.onSuccess(true, resultInfo)
                         }else{
                             loadListener.onSuccess(false, null)

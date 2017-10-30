@@ -1,6 +1,7 @@
 package com.wiatec.blive.view.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Window
@@ -16,6 +17,7 @@ import com.wiatec.blive.instance.*
 import com.wiatec.blive.pojo.*
 import com.wiatec.blive.presenter.SplashPresenter
 import com.wiatec.blive.task.DownloadUserIcon
+import kotlinx.android.synthetic.main.activity_splash.*
 
 
 class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
@@ -27,6 +29,7 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_splash)
+        tvVersion.text = AppUtil.getVersionName(packageName)
     }
 
     override fun onStart() {
