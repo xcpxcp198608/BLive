@@ -22,3 +22,6 @@ const val KEY_AUTH_ICON_PATH = "auth_icon_path"
 const val KEY_AUTH_PREVIEW_URL = "auth_preview_url"
 const val KEY_AUTH_PREVIEW_PATH = "auth_preview_path"
 
+const val KEY_PLAY_TYPE = "play_type"
+const val KEY_PLAY_TYPE_LOCAL = "play_type_local"
+

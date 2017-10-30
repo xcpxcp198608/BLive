@@ -24,6 +24,14 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/switch_camera" />
 
+        <ImageButton
+            android:id="@+id/ibtRecord"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_bt_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <Spinner
             android:background="@drawable/bg_bt_auth"
             android:id="@+id/spResolution"
