@@ -19,5 +19,6 @@ class LiveChannelViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     var tvUserName: TextView = itemView.findViewById(R.id.tvUsername) as TextView
     var tvStartTime: TextView = itemView.findViewById(R.id.tvStartTime) as TextView
     var ivPreview: ImageView = itemView.findViewById(R.id.ivPreview) as ImageView
+    var tvPrice: TextView = itemView.findViewById(R.id.tvPrice) as TextView
 
 }

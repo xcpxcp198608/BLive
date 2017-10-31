@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
 import android.text.TextUtils
@@ -22,9 +21,8 @@ import com.px.common.utils.SPUtil
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.FragmentAdapter
 import com.wiatec.blive.instance.*
-import com.wiatec.blive.manager.PermissionManager
-import com.wiatec.blive.manager.REQUEST_CODE_AUDIO
-import com.wiatec.blive.manager.REQUEST_CODE_CAMERA
+import com.wiatec.blive.manager.*
+import com.wiatec.blive.pay.PayPalConfig
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.presenter.MainPresenter
@@ -58,6 +56,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         initSlideNavigation()
         initFragment()
         initEvent()
+        PayPalConfig.startPayPalService(this@MainActivity)
         Executor.executorService.execute(DownloadUserIcon())
     }
 
@@ -121,6 +120,11 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         ivPerson.setOnClickListener(this)
         tvSetting.setOnClickListener(this)
         tvSignOut.setOnClickListener(this)
+    }
+
+    override fun onDestroy() {
+        PayPalConfig.stopPayPalService(this@MainActivity)
+        super.onDestroy()
     }
 
     private fun showConsentDialog() {

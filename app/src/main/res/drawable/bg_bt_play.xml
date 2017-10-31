@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_play_circle_outline_pink_800_48dp" android:state_pressed="true"/>
-    <item android:drawable="@drawable/ic_play_circle_outline_pink_800_48dp" android:state_selected="true"/>
-    <item android:drawable="@drawable/ic_play_circle_outline_pink_800_48dp" android:state_focused="true"/>
+    <item android:drawable="@drawable/ic_play_circle_outline_blue_grey_900_48dp" android:state_pressed="true"/>
+    <item android:drawable="@drawable/ic_play_circle_outline_blue_grey_900_48dp" android:state_selected="true"/>
+    <item android:drawable="@drawable/ic_play_circle_outline_blue_grey_900_48dp" android:state_focused="true"/>
     <item android:drawable="@drawable/ic_play_circle_outline_blue_grey_400_48dp" android:state_enabled="false"/>
-    <item android:drawable="@drawable/ic_play_circle_outline_pink_400_48dp"/>
+    <item android:drawable="@drawable/ic_play_circle_outline_black_48dp"/>
 </selector>
