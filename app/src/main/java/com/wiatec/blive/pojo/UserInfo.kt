@@ -8,7 +8,8 @@ class UserInfo {
     var email: String? = null
     var phone: String? = null
     var icon: String? = null
-    var isStatus: Boolean = false
+    var status: Boolean = false
+    var publisher: Boolean = false
     var registerTime: String? = null
     var channelInfo: ChannelInfo? = null
 
@@ -38,7 +39,8 @@ class UserInfo {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", icon='" + icon + '\'' +
-                ", status=" + isStatus +
+                ", status=" + status +
+                ", publisher=" + publisher +
                 ", registerTime='" + registerTime + '\'' +
                 ", channelInfo=" + channelInfo +
                 '}'

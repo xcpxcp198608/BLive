@@ -22,6 +22,7 @@ import java.lang.IllegalStateException
 import java.net.SocketException
 import com.px.common.utils.EmojiToast
 import com.px.common.utils.SPUtil
+import com.px.common.utils.TimeUtil
 import com.seu.magicfilter.utils.MagicFilterType
 import com.wiatec.blive.animator.Rotation
 import com.wiatec.blive.instance.*
@@ -37,6 +38,8 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     private var pushUrl = ""
     private var isPushing = false
     private var publisher: SrsPublisher? = null
+    private var recordPath = ""
+    private var isRecording = false
 
     override fun createPresenter(): PushPresenter = PushPresenter(this)
 
@@ -48,15 +51,18 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_push)
+        recordPath = getExternalFilesDir("record").absolutePath
         initView()
         initSpinner()
     }
 
     private fun initView() {
         ibtStart.isEnabled = false
+        ibtRecord.isEnabled = false
         btConfirm.setOnClickListener(this)
         ibtStart.setOnClickListener(this)
         ibtSwitchCamera.setOnClickListener(this)
+        ibtRecord.setOnClickListener(this)
     }
 
     private fun initSpinner(){
@@ -107,9 +113,24 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         if(publisher != null) {
             publisher!!.stopPublish()
             publisher!!.stopRecord()
-            publisher!!.stopEncode()
             isPushing = false
+            isRecording = false
         }
+    }
+
+    private fun startRecord(){
+        if(TextUtils.isEmpty(title)){
+            title = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+        }
+        recordPath += "/" + title + "_" + System.currentTimeMillis() + ".mp4"
+        if(publisher!!.startRecord(recordPath)) {
+            isRecording = true
+        }
+    }
+
+    private fun stopRecord(){
+        publisher!!.stopRecord()
+        isRecording = false
     }
 
     override fun onStop() {
@@ -120,12 +141,16 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.btConfirm -> {
-                var name = etChannelTitle.text.toString()
-                if(TextUtils.isEmpty(name)){
-                    name = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+                var title = etChannelTitle.text.toString()
+                var message = etChannelMessage.text.toString()
+                if(TextUtils.isEmpty(title)){
+                    title = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+                }
+                if(TextUtils.isEmpty(message)){
+                    message = ""
                 }
                 val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
-                presenter!!.updateChannelName(ChannelInfo(name, userId))
+                presenter!!.updateChannelName(ChannelInfo(title, message, userId, holder = 0))
             }
             R.id.ibtStart -> {
                 if(isPushing){
@@ -140,6 +165,15 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                 Rotation.r180(ibtSwitchCamera)
                 if(publisher != null) {
                     publisher!!.switchCameraFace((publisher!!.camraId + 1) % Camera.getNumberOfCameras())
+                }
+            }
+            R.id.ibtRecord -> {
+                if(isRecording){
+                    stopRecord()
+                    ibtRecord.setBackgroundResource(R.drawable.bg_bt_record)
+                }else{
+                    startRecord()
+                    ibtRecord.setBackgroundResource(R.drawable.bg_bt_record_stop)
                 }
             }
         }
@@ -178,7 +212,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
 
     override fun updateChannelName(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
         if(execute && resultInfo != null){
-            Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
                 llSetting.visibility = View.GONE
                 ibtStart.isEnabled = true
@@ -211,7 +244,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     }
 
     override fun onRecordStarted(msg: String?) {
-        EmojiToast.show("start", EmojiToast.EMOJI_SMILE)
+        EmojiToast.show("record start", EmojiToast.EMOJI_SMILE)
     }
 
     override fun onRecordFinished(msg: String?) {
@@ -233,6 +266,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onRtmpConnected(msg: String?) {
         Logger.d("onRtmpConnected")
         presenter!!.updateChannelStatus(ACTIVATE)
+        ibtRecord.isEnabled = true
     }
 
     override fun onRtmpVideoStreaming() {
@@ -257,18 +291,18 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onRtmpVideoBitrateChanged(bitrate: Double) {
         val rate = bitrate.toInt()
         if (rate / 1000 > 0) {
-            Logger.d(String.format("Video bitrate: %d kbps", rate))
+            Logger.i(String.format("Video bitrate: %d kbps", rate))
         } else {
-            Logger.d(String.format("Video bitrate: %d bps", rate))
+            Logger.i(String.format("Video bitrate: %d bps", rate))
         }
     }
 
     override fun onRtmpAudioBitrateChanged(bitrate: Double) {
         val rate = bitrate.toInt()
         if (rate / 1000 > 0) {
-            Logger.d(String.format("Audio bitrate: %d kbps", rate))
+            Logger.i(String.format("Audio bitrate: %d kbps", rate))
         } else {
-            Logger.d(String.format("Audio bitrate: %d bps", rate))
+            Logger.i(String.format("Audio bitrate: %d bps", rate))
         }
     }
 
@@ -290,13 +324,13 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
 
     private fun handleException(e: Exception) {
         try {
-            EmojiToast.show(e.message, EmojiToast.EMOJI_SAD)
+            EmojiToast.showLong(e.message, EmojiToast.EMOJI_SAD)
+            Logger.d(e.message)
             publisher!!.stopPublish()
             publisher!!.stopRecord()
         } catch (e1: Exception) {
             Logger.d(e1.message)
         }
-
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

@@ -55,14 +55,35 @@
         android:layout_width="match_parent"
         android:layout_height="14dp" />
 
-    <ImageView
-        android:layout_marginTop="3dp"
-        android:layout_below="@id/civIcon"
-        android:id="@+id/ivPreview"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/img_error_preview"
-        android:elevation="8dp"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="240dp" />
+        android:layout_height="240dp"
+        android:layout_marginTop="3dp"
+        android:layout_below="@id/civIcon">
+
+        <ImageView
+            android:id="@+id/ivPreview"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/img_error_preview"
+            android:elevation="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="240dp" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            tools:text="$1.99"
+            android:textStyle="italic|bold"
+            android:textColor="@android:color/white"
+            android:layout_gravity="right"
+            android:layout_margin="10dp"
+            android:padding="3dp"
+            android:textSize="20sp"
+            android:elevation="9dp"
+            android:background="@android:color/holo_red_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+
 
 </RelativeLayout>

@@ -6,9 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.wiatec.blive.view.activity.SplashActivity">
 
-    <ImageView
-        android:src="@drawable/bg_main"
-        android:scaleType="centerCrop"
+    <TextView
+        android:background="@drawable/img_bg1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -22,4 +21,13 @@
         android:background="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="70dp" />
+
+    <TextView
+        android:id="@+id/tvVersion"
+        tools:text="v1.0.0"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:textColor="@color/colorGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </FrameLayout>

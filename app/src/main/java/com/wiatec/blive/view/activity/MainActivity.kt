@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
+import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBarDrawerToggle
 import android.text.TextUtils
 import android.view.KeyEvent
@@ -18,10 +19,10 @@ import com.px.common.utils.EmojiToast
 import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.wiatec.blive.R
+import com.wiatec.blive.adapter.FragmentAdapter
 import com.wiatec.blive.instance.*
-import com.wiatec.blive.manager.PermissionManager
-import com.wiatec.blive.manager.REQUEST_CODE_AUDIO
-import com.wiatec.blive.manager.REQUEST_CODE_CAMERA
+import com.wiatec.blive.manager.*
+import com.wiatec.blive.pay.PayPalConfig
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.presenter.MainPresenter
@@ -29,6 +30,7 @@ import com.wiatec.blive.task.DownloadUserIcon
 import com.wiatec.blive.utils.AuthUtils
 import com.wiatec.blive.utils.WindowUtil
 import com.wiatec.blive.view.fragment.FragmentLiveChannel
+import com.wiatec.blive.view.fragment.FragmentLiveRecords
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_layout.*
 import kotlinx.android.synthetic.main.slide_navigation.*
@@ -54,6 +56,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         initSlideNavigation()
         initFragment()
         initEvent()
+        PayPalConfig.startPayPalService(this@MainActivity)
         Executor.executorService.execute(DownloadUserIcon())
     }
 
@@ -99,10 +102,17 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     }
 
     private fun initFragment() {
+
+        val fragmentList = ArrayList<Fragment>()
         val fragmentLive = FragmentLiveChannel()
-        supportFragmentManager.beginTransaction()
-                .add(R.id.frameLayout, fragmentLive, "fragmentLive")
-                .commit()
+        val fragmentRecords = FragmentLiveRecords()
+        fragmentList.add(fragmentLive)
+        fragmentList.add(fragmentRecords)
+        val fragmentAdapter = FragmentAdapter(supportFragmentManager, fragmentList)
+        viewPager.adapter = fragmentAdapter
+        viewPager.offscreenPageLimit = fragmentList.size
+        tabLayout.addTab(tabLayout.newTab().setText("Live"))
+        tabLayout.addTab(tabLayout.newTab().setText("Record"))
     }
 
     private fun initEvent(){
@@ -110,6 +120,11 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
         ivPerson.setOnClickListener(this)
         tvSetting.setOnClickListener(this)
         tvSignOut.setOnClickListener(this)
+    }
+
+    override fun onDestroy() {
+        PayPalConfig.stopPayPalService(this@MainActivity)
+        super.onDestroy()
     }
 
     private fun showConsentDialog() {

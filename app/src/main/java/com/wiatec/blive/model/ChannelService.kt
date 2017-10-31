@@ -21,7 +21,7 @@ interface ChannelService {
     fun updateChannel(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
 
     @Headers("Content-Type: application/json;charset=UTF-8")
-    @PUT("channel/name")
+    @PUT("channel/title")
     fun updateChannelName(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
 
     @PUT("channel/status/{activate}/{userId}")

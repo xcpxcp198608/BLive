@@ -24,6 +24,14 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/switch_camera" />
 
+        <ImageButton
+            android:id="@+id/ibtRecord"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_bt_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <Spinner
             android:background="@drawable/bg_bt_auth"
             android:id="@+id/spResolution"
@@ -70,6 +78,17 @@
             <EditText
                 android:id="@+id/etChannelTitle"
                 android:hint="@string/live_title"
+                tools:text="fdsfsdf"
+                android:textColorHint="@color/colorGray"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:layout_marginTop="10dp"
+                android:id="@+id/etChannelMessage"
+                android:hint="@string/live_message"
                 tools:text="fdsfsdf"
                 android:textColorHint="@color/colorGray"
                 android:textColor="@android:color/white"

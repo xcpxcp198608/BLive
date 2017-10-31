@@ -3,7 +3,8 @@ package com.wiatec.blive.pojo
 class ChannelInfo {
 
     var id: Int = 0
-    var name: String? = null
+    var title: String? = null
+    var message: String? = null
     var url: String? = null
     var playUrl: String? = null
     var preview: String? = null
@@ -13,6 +14,7 @@ class ChannelInfo {
      * 1:default liveChannel
      */
     var type: Int = 0
+    var price: Float = 0f
     var startTime: String? = null
     var userId: Int = 0
     var userInfo: UserInfo? = null
@@ -23,9 +25,15 @@ class ChannelInfo {
         this.userId = userId
     }
 
-    constructor(name: String, userId: Int) {
-        this.name = name
+    constructor(title: String, userId: Int) {
+        this.title = title
         this.userId = userId
+    }
+
+    constructor(title: String, message: String, userId: Int, holder:Int) {
+        this.title = title
+        this.userId = userId
+        this.message = message
     }
 
     constructor(url: String, playUrl: String, userId: Int) {
@@ -35,18 +43,8 @@ class ChannelInfo {
     }
 
     override fun toString(): String {
-        return "ChannelInfo{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", url='" + url + '\'' +
-                ", playUrl='" + playUrl + '\'' +
-                ", preview='" + preview + '\'' +
-                ", category='" + category + '\'' +
-                ", available=" + isAvailable +
-                ", type=" + type +
-                ", startTime='" + startTime + '\'' +
-                ", userId=" + userId +
-                ", userInfo=" + userInfo +
-                '}'
+        return "ChannelInfo(id=$id, title=$title, message=$message, url=$url, playUrl=$playUrl, preview=$preview, category=$category, isAvailable=$isAvailable, type=$type, price=$price, startTime=$startTime, userId=$userId, userInfo=$userInfo)"
     }
+
+
 }
