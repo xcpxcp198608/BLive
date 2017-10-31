@@ -3,6 +3,6 @@
     <item android:drawable="@drawable/ic_fiber_manual_record_blue_grey_900_48dp" android:state_pressed="true"/>
     <item android:drawable="@drawable/ic_fiber_manual_record_blue_grey_900_48dp" android:state_selected="true"/>
     <item android:drawable="@drawable/ic_fiber_manual_record_blue_grey_900_48dp" android:state_focused="true"/>
-    <item android:drawable="@drawable/ic_fiber_manual_record_grey_400_48dp" android:state_enabled="false"/>
-    <item android:drawable="@drawable/ic_fiber_manual_record_blue_grey_700_48dp"/>
+    <item android:drawable="@drawable/ic_fiber_manual_record_blue_grey_400_48dp" android:state_enabled="false"/>
+    <item android:drawable="@drawable/ic_fiber_manual_record_black_48dp"/>
 </selector>

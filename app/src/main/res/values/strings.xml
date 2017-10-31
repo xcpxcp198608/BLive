@@ -28,10 +28,15 @@
     <string name="switch_camera">switch_camera</string>
     <string name="play_pause">play_pause</string>
     <string name="live_title">LiveTitle(default value is your username when no type in)</string>
+    <string name="live_message">LiveMessage(type in here, audiences will see this in play screen)</string>
     <string name="exit_notice">Press back key down to exit</string>
     <string name="push_url_error">Signin error, please signin again</string>
     <string name="click_to_edit">click to edit</string>
     <string name="no_signin">No Signin</string>
+    <string name="refresh">pull down page to refresh</string>
+    <string name="no_data">No data</string>
+    <string name="no_network">no network connect</string>
+    <string name="check_your_network_status">check your network status</string>
 
     <array name="resolutions">
         <item>360P</item>

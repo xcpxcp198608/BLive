@@ -18,5 +18,19 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    
+    <TextView
+        android:id="@+id/tvChannelMessage"
+        android:visibility="gone"
+        tools:text="test test test"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/bg_channel_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </FrameLayout>

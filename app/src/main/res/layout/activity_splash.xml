@@ -6,9 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.wiatec.blive.view.activity.SplashActivity">
 
-    <ImageView
-        android:src="@drawable/img_bg1"
-        android:scaleType="centerCrop"
+    <TextView
+        android:background="@drawable/img_bg1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -19,10 +18,9 @@
         android:textColor="@android:color/white"
         android:textStyle="italic"
         android:gravity="center"
-        android:layout_marginBottom="10dp"
         android:background="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="60dp" />
+        android:layout_height="70dp" />
 
     <TextView
         android:id="@+id/tvVersion"
@@ -30,7 +28,6 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:textColor="@color/colorGray"
-        android:background="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </FrameLayout>

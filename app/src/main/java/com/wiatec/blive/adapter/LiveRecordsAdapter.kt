@@ -26,10 +26,8 @@ class LiveRecordsAdapter(private var liveRecordsList: List<LiveRecordsInfo>):
             if(holderLiveRecords != null) {
                 holderLiveRecords.tvTitle.text = liveRecordsInfo.title
                 holderLiveRecords.tvModifyTime.text = liveRecordsInfo.modifyTime
-//                holderLiveRecords.ivPreview.setImageBitmap(MediaUtil.getVideoThumbnail(liveRecordsInfo.playUrl))
-                ImageMaster.loadBitmap(MediaUtil.getVideoThumbnail(liveRecordsInfo.playUrl), holderLiveRecords.ivPreview,
-                        R.drawable.img_holder_preview,
-                        R.drawable.img_error_preview)
+                holderLiveRecords.ivPreview
+                        .setImageBitmap(MediaUtil.getVideoThumbnail(liveRecordsInfo.playUrl))
             }
         }catch (e: Exception){
             Logger.d(e.message)

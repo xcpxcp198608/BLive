@@ -22,10 +22,16 @@ class LiveChannelAdapter(private var channelList: List<ChannelInfo>):
         try {
             val channelInfo = channelList[position]
             if(holderLive != null) {
-                holderLive.tvTitle.text = channelInfo.name
+                holderLive.tvTitle.text = channelInfo.title
                 holderLive.tvUserName.text = channelInfo.userInfo!!.username
                 holderLive.tvStartTime.text = channelInfo.startTime!!.substring(0,
                         channelInfo.startTime!!.length -2)
+                if(channelInfo.price <= 0) {
+                    holderLive.tvPrice.visibility = View.GONE
+                }else {
+                    holderLive.tvPrice.text = "$" + channelInfo.price.toString()
+                    holderLive.tvPrice.visibility = View.VISIBLE
+                }
                 ImageMaster.load(channelInfo.userInfo!!.icon, holderLive.civIcon,
                         R.drawable.img_holder_icon,
                         R.drawable.img_error_icon)

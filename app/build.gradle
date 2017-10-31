@@ -13,6 +13,9 @@ android {
         versionName "1.0.1"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
     }
     signingConfigs {
         release {
@@ -59,6 +62,12 @@ android {
             }
         }
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 static def releaseTime() {
@@ -77,14 +86,21 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
-    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'org.jetbrains.anko:anko:0.10.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.afollestad.material-dialogs:commons:0.9.4.5'
-    compile 'com.android.support:cardview-v7:25.3.1'
     testCompile 'junit:junit:4.12'
+
+    compile('com.paypal.sdk:paypal-android-sdk:2.15.3') {
+        exclude group: 'io.card'
+    }
 }
+
 repositories {
     mavenCentral()
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
 }

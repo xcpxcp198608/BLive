@@ -11,6 +11,7 @@ import com.px.common.utils.EmojiToast
 import com.px.common.utils.Logger
 
 import com.wiatec.blive.R
+import com.wiatec.blive.instance.KEY_CHANNEL_MESSAGE
 import com.wiatec.blive.instance.KEY_PLAY_TYPE
 import com.wiatec.blive.instance.KEY_PLAY_TYPE_LOCAL
 import com.wiatec.blive.instance.KEY_URL
@@ -24,7 +25,12 @@ class PlayActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_play)
         val url = intent.getStringExtra(KEY_URL)
+        val message = intent.getStringExtra(KEY_CHANNEL_MESSAGE)
         val type = intent.getStringExtra(KEY_PLAY_TYPE)
+        if(!TextUtils.isEmpty(message)){
+            tvChannelMessage.text = message
+            tvChannelMessage.visibility = View.VISIBLE
+        }
         play(url, type)
     }
 

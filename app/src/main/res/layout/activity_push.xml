@@ -85,6 +85,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <EditText
+                android:layout_marginTop="10dp"
+                android:id="@+id/etChannelMessage"
+                android:hint="@string/live_message"
+                tools:text="fdsfsdf"
+                android:textColorHint="@color/colorGray"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <Button
                 android:id="@+id/btConfirm"
                 android:layout_marginTop="10dp"

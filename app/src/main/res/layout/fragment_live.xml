@@ -24,6 +24,11 @@
         android:visibility="gone"
         layout="@layout/layout_no_data"/>
 
+    <include
+        android:id="@+id/llNoNetwork"
+        android:visibility="gone"
+        layout="@layout/layout_no_network"/>
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_gravity="center"

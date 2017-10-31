@@ -40,7 +40,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     private var publisher: SrsPublisher? = null
     private var recordPath = ""
     private var isRecording = false
-    private var title = ""
 
     override fun createPresenter(): PushPresenter = PushPresenter(this)
 
@@ -59,6 +58,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
 
     private fun initView() {
         ibtStart.isEnabled = false
+        ibtRecord.isEnabled = false
         btConfirm.setOnClickListener(this)
         ibtStart.setOnClickListener(this)
         ibtSwitchCamera.setOnClickListener(this)
@@ -141,13 +141,16 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.btConfirm -> {
-                var name = etChannelTitle.text.toString()
-                if(TextUtils.isEmpty(name)){
-                    name = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+                var title = etChannelTitle.text.toString()
+                var message = etChannelMessage.text.toString()
+                if(TextUtils.isEmpty(title)){
+                    title = SPUtil.get(KEY_AUTH_USERNAME, "") as String
                 }
-                title = name
+                if(TextUtils.isEmpty(message)){
+                    message = ""
+                }
                 val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
-                presenter!!.updateChannelName(ChannelInfo(name, userId))
+                presenter!!.updateChannelName(ChannelInfo(title, message, userId, holder = 0))
             }
             R.id.ibtStart -> {
                 if(isPushing){
@@ -209,7 +212,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
 
     override fun updateChannelName(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
         if(execute && resultInfo != null){
-//            Logger.d(resultInfo.toString())
             if(resultInfo.code == ResultInfo.CODE_OK){
                 llSetting.visibility = View.GONE
                 ibtStart.isEnabled = true
@@ -264,6 +266,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onRtmpConnected(msg: String?) {
         Logger.d("onRtmpConnected")
         presenter!!.updateChannelStatus(ACTIVATE)
+        ibtRecord.isEnabled = true
     }
 
     override fun onRtmpVideoStreaming() {
