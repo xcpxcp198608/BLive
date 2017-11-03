@@ -5,6 +5,7 @@ import android.hardware.Camera
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
+import android.webkit.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.afollestad.materialdialogs.MaterialDialog
@@ -29,6 +30,7 @@ import com.wiatec.blive.instance.*
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.presenter.PushPresenter
+import kotlinx.android.synthetic.main.activity_push.*
 
 
 class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickListener,
@@ -40,6 +42,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     private var publisher: SrsPublisher? = null
     private var recordPath = ""
     private var isRecording = false
+    private var isJSLoaded = false
 
     override fun createPresenter(): PushPresenter = PushPresenter(this)
 
@@ -54,6 +57,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         recordPath = getExternalFilesDir("record").absolutePath
         initView()
         initSpinner()
+        initWebView()
     }
 
     private fun initView() {
@@ -136,6 +140,11 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onStop() {
         super.onStop()
         stopPush()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseWebView()
     }
 
     override fun onClick(v: View?) {
@@ -352,6 +361,54 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                     finish()
                 }
                 .show()
+    }
+
+    class MyWebViewClient: WebViewClient(){
+        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean = true
+    }
+
+    private fun initWebView(){
+        webView.setWebViewClient(MyWebViewClient())
+        webView.setBackgroundColor(0)
+        val webSettings = webView.settings
+        webSettings.javaScriptEnabled = true
+        webSettings.useWideViewPort = true
+        webSettings.loadWithOverviewMode = true
+        webSettings.setSupportZoom(true)
+        webSettings.builtInZoomControls = true
+        webSettings.displayZoomControls = false
+        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
+        webSettings.allowFileAccess = true
+        webSettings.javaScriptCanOpenWindowsAutomatically = true
+        webSettings.loadsImagesAutomatically = true
+        webSettings.defaultTextEncodingName = "utf-8"
+        webView.setWebChromeClient(WebChromeClient())
+        loadWebView()
+    }
+
+    private fun loadWebView(){
+        isJSLoaded = false
+        webView.loadUrl("http://blive.protv.company:8804/html/danmu.html")
+        webView.setWebChromeClient(object: WebChromeClient(){
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                if(newProgress >= 100){
+                    if(!isJSLoaded) {
+                        val channel = SPUtil.get(KEY_CHANNEL_ID, "") as String
+                        webView.loadUrl("javascript:showDanMu('$channel')")
+                        isJSLoaded = true
+                    }
+                }
+            }
+        })
+    }
+
+    private fun releaseWebView(){
+        if (webView != null) {
+            webView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
+            webView.clearHistory()
+            (webView.parent as ViewGroup).removeView(webView)
+            webView.destroy()
+        }
     }
 
 }

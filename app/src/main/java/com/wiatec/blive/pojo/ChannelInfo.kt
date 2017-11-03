@@ -1,6 +1,8 @@
 package com.wiatec.blive.pojo
 
-class ChannelInfo {
+import java.io.Serializable
+
+class ChannelInfo: Serializable {
 
     var id: Int = 0
     var title: String? = null

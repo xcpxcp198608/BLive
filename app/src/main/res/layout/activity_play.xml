@@ -20,17 +20,55 @@
         android:layout_height="wrap_content" />
     
     <TextView
-        android:id="@+id/tvChannelMessage"
         android:visibility="gone"
+        android:id="@+id/tvChannelMessage"
         tools:text="test test test"
         android:textStyle="bold"
         android:textSize="22sp"
-        android:layout_gravity="bottom"
         android:layout_margin="10dp"
         android:padding="5dp"
         android:textColor="@android:color/white"
         android:background="@drawable/bg_channel_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Switch
+            android:id="@+id/switchDanMu"
+            android:checked="true"
+            android:layout_marginRight="5dp"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DanMu"/>
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:textColor="@android:color/white"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/btSend"
+            android:text="Send"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/webView"
+        android:background="@android:color/transparent"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+    </WebView>
 
 </FrameLayout>

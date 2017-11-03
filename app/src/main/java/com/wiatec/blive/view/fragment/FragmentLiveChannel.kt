@@ -31,14 +31,15 @@ import com.wiatec.blive.presenter.LiveFragmentPresenter
 import com.wiatec.blive.view.activity.PlayActivity
 import com.wiatec.blive.view.custom_view.BasicLinearItemDecoration
 import kotlinx.android.synthetic.main.fragment_live.*
-
+import java.io.Serializable
 
 
 /**
  * Created by patrick on 24/05/2017.
  * create time : 3:49 PM
  */
-class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), LiveChannel {
+class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), LiveChannel,
+        PayPalManager.OnPayResultListener {
 
     private var liveChannelAdapter: LiveChannelAdapter? = null
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
@@ -128,25 +129,21 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            val confirm = data!!.getParcelableExtra<PaymentConfirmation>(PaymentActivity.EXTRA_RESULT_CONFIRMATION)
-            if (confirm != null) {
-                val paymentId = confirm.toJSONObject().getJSONObject("response").getString("id")
-                Logger.d(paymentId)
-            }
-        }else if (resultCode == Activity.RESULT_CANCELED) {
-            Logger.d("user canceled")
-            EmojiToast.show("user canceled", EmojiToast.EMOJI_SAD)
-        }else{
-            Logger.d("pay fail")
-        }
+        PayPalManager.payResult(requestCode, resultCode, data, this)
     }
 
+    override fun paySuccess(paymentId: String) {
+        Logger.d(paymentId)
+    }
+
+    override fun customerCancel(error: String) {
+        Logger.d(error)
+        EmojiToast.show(error, EmojiToast.EMOJI_SAD)
+    }
 
     private fun playLiveChannel(channelInfo: ChannelInfo){
         val intent = Intent(context, PlayActivity::class.java)
-        intent.putExtra(KEY_URL, channelInfo.playUrl)
-        intent.putExtra(KEY_CHANNEL_MESSAGE, channelInfo.message)
+        intent.putExtra("channelInfo", channelInfo as Serializable)
         intent.putExtra(KEY_PLAY_TYPE, "")
         startActivity(intent)
     }
