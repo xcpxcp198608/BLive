@@ -1,6 +1,8 @@
 package com.wiatec.blive.pojo
 
-class UserInfo {
+import java.io.Serializable
+
+class UserInfo: Serializable {
 
     var id: Int = 0
     var username: String? = null
