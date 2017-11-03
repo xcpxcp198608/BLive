@@ -16,6 +16,7 @@ const val ACTIVATE = 1
 const val DEACTIVATE = 0
 
 const val KEY_URL = "url"
+const val KEY_CHANNEL_ID = "channel_id"
 const val KEY_CHANNEL_MESSAGE = "channel_message"
 const val KEY_AUTH_USERNAME = "auth_username"
 const val KEY_AUTH_USER_ID = "auth_user_id"

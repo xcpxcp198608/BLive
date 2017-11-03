@@ -289,6 +289,10 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
             if(resultInfo.code != ResultInfo.CODE_OK){
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
+            val channelInfo  = resultInfo.t
+            if(channelInfo != null) {
+                SPUtil.put(KEY_CHANNEL_ID, channelInfo.id.toString())
+            }
         }else{
             EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
         }
