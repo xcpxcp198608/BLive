@@ -94,7 +94,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.paypal.sdk:paypal-android-sdk:2.15.3'
     compile files('src/main/libs/goeasy-sdk-0.3.8.jar')
-    compile files('src/main/libs/gson-2.3.1.jar')
     compile files('src/main/libs/slf4j-api-1.7.2.jar')
 }
 

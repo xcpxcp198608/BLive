@@ -263,7 +263,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
             }
         }else{
             enableButton(btSignIn, progressBarSignIn)
-            EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("signin server error 01", EmojiToast.EMOJI_SAD)
         }
     }
 
@@ -272,7 +272,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
             SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data!!.push_full_url)
             val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
             if(userId == 0){
-                EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
+                EmojiToast.show("signin server error 02", EmojiToast.EMOJI_SAD)
             }else {
                 presenter!!.updateChannel(ChannelInfo(pushInfo.data!!.push_full_url!!,
                         pushInfo.data!!.play_url!!, userId))
@@ -294,7 +294,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                 SPUtil.put(KEY_CHANNEL_ID, channelInfo.id.toString())
             }
         }else{
-            EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("signin server error 03", EmojiToast.EMOJI_SAD)
         }
         jumpToMain()
     }
