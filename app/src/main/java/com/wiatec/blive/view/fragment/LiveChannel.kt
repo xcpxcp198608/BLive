@@ -1,5 +1,6 @@
 package com.wiatec.blive.view.fragment
 
+import com.wiatec.blive.pay.PayResultInfo
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
 
@@ -8,5 +9,6 @@ import com.wiatec.blive.pojo.ResultInfo
  * create time : 5:20 PM
  */
 interface LiveChannel {
-    fun listChannel(execute: Boolean, channelInfoList: List<ChannelInfo>?)
+    fun onListChannel(execute: Boolean, channelInfoList: List<ChannelInfo>?)
+    fun onValidatePay(execute: Boolean, resultInfo: ResultInfo<PayResultInfo>?)
 }

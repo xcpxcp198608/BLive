@@ -36,12 +36,13 @@
         android:layout_gravity="bottom"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp">
 
         <Switch
             android:id="@+id/switchDanMu"
             android:checked="true"
             android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
             android:textColor="@android:color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,14 +51,17 @@
         <EditText
             android:id="@+id/etMessage"
             android:textColor="@android:color/white"
+            android:imeOptions="actionSend"
+            android:singleLine="true"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent" />
 
-        <Button
-            android:id="@+id/btSend"
-            android:text="Send"
+        <ImageButton
+            android:id="@+id/ibtSend"
             android:textAllCaps="false"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/bg_bt_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

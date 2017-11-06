@@ -19,15 +19,20 @@ import com.paypal.android.sdk.payments.PaymentConfirmation
 import com.px.common.utils.EmojiToast
 import com.px.common.utils.Logger
 import com.px.common.utils.NetUtil
+import com.px.common.utils.SPUtil
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.LiveChannelAdapter
+import com.wiatec.blive.instance.KEY_AUTH_USER_ID
 import com.wiatec.blive.instance.KEY_CHANNEL_MESSAGE
 import com.wiatec.blive.instance.KEY_PLAY_TYPE
 import com.wiatec.blive.instance.KEY_URL
 import com.wiatec.blive.pay.PayInfo
 import com.wiatec.blive.pay.PayPalManager
+import com.wiatec.blive.pay.PayResultInfo
 import com.wiatec.blive.pojo.ChannelInfo
+import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.presenter.LiveFragmentPresenter
+import com.wiatec.blive.view.activity.AuthActivity
 import com.wiatec.blive.view.activity.PlayActivity
 import com.wiatec.blive.view.custom_view.BasicLinearItemDecoration
 import kotlinx.android.synthetic.main.fragment_live.*
@@ -45,6 +50,7 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
     private var progressBar: ProgressBar? = null
     private var activity: Activity? = null
+    private var mChannelInfo: ChannelInfo? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -63,7 +69,7 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
         return view
     }
 
-    override fun listChannel(execute: Boolean, channelInfoList: List<ChannelInfo>?) {
+    override fun onListChannel(execute: Boolean, channelInfoList: List<ChannelInfo>?) {
         swipeRefreshLayout!!.isRefreshing = false
         progressBar!!.visibility = View.GONE
         if(execute && channelInfoList != null){
@@ -86,6 +92,7 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
             }
             liveChannelAdapter!!.setOnItemClickListener { _, position ->
                 val channelInfo = channelInfoList[position]
+                mChannelInfo = channelInfo
                 playChannel(channelInfo)
             }
         }else{
@@ -106,7 +113,27 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
             playLiveChannel(channelInfo)
             return
         }
-        showPayDialog(PayInfo(channelInfo.price, "USD", channelInfo.title!!))
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        if(userId <= 0){
+            EmojiToast.show("you have no sign in", EmojiToast.EMOJI_SAD)
+            jumpToAuth()
+        }
+        presenter!!.validatePay(userId, channelInfo.userId, "")
+    }
+
+    override fun onValidatePay(execute: Boolean, resultInfo: ResultInfo<PayResultInfo>?) {
+        if(execute && resultInfo != null){
+            if(resultInfo.code == 200){
+                if(mChannelInfo != null) {
+                    playLiveChannel(mChannelInfo!!)
+                }
+            }else{
+                showPayDialog(PayInfo(mChannelInfo!!.price, "USD", mChannelInfo!!.title!!))
+                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
+            }
+        }else{
+            EmojiToast.show("net communication error", EmojiToast.EMOJI_SAD)
+        }
     }
 
     private fun showPayDialog(payInfo: PayInfo){
@@ -134,6 +161,8 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
 
     override fun paySuccess(paymentId: String) {
         Logger.d(paymentId)
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        presenter!!.validatePay(userId, mChannelInfo!!.userId, paymentId)
     }
 
     override fun customerCancel(error: String) {
@@ -155,5 +184,11 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
         val tvContent = snackBar.view.findViewById(R.id.snackbar_text) as TextView
         tvContent.setTextColor(Color.rgb(255, 64, 129))
         snackBar.show()
+    }
+
+    private fun jumpToAuth(){
+        val intent = Intent(context , AuthActivity::class.java)
+        startActivity(intent)
+        activity!!.finish()
     }
 }

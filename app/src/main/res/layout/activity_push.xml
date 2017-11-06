@@ -66,6 +66,14 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/play_pause" />
 
+        <WebView
+            android:id="@+id/webView"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </WebView>
+
         <LinearLayout
             android:id="@+id/llSetting"
             android:paddingLeft="50dp"
@@ -113,12 +121,6 @@
 
     </FrameLayout>
 
-    <WebView
-        android:id="@+id/webView"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="100dp">
-    </WebView>
+
 
 </FrameLayout>

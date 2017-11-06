@@ -4,9 +4,8 @@ import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.webkit.*
 import android.widget.CompoundButton
 import com.px.common.http.HttpMaster
@@ -17,7 +16,7 @@ import com.wiatec.blive.R
 import com.wiatec.blive.instance.KEY_PLAY_TYPE
 import com.wiatec.blive.instance.KEY_PLAY_TYPE_LOCAL
 import kotlinx.android.synthetic.main.activity_play.*
-import android.view.ViewGroup
+import android.widget.TextView
 import com.wiatec.blive.pojo.ChannelInfo
 
 
@@ -43,8 +42,15 @@ class PlayActivity : AppCompatActivity(), View.OnClickListener, CompoundButton.O
             tvChannelMessage.text = message
             tvChannelMessage.visibility = View.VISIBLE
         }
-        btSend.setOnClickListener(this)
+        ibtSend.setOnClickListener(this)
         switchDanMu.setOnCheckedChangeListener(this)
+        etMessage.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if(actionId == EditorInfo.IME_ACTION_SEND){
+                sendGoEasyMessage()
+                return@OnEditorActionListener true
+            }
+            false
+        })
         play(url, type)
         initWebView()
     }
@@ -137,11 +143,8 @@ class PlayActivity : AppCompatActivity(), View.OnClickListener, CompoundButton.O
 
     override fun onClick(v: View?) {
         when(v!!.id){
-            R.id.btSend -> {
-                val message = etMessage.text.toString()
-                if(!TextUtils.isEmpty(message)) {
-                    sendGoEasyMessage(message)
-                }
+            R.id.ibtSend -> {
+                sendGoEasyMessage()
             }
         }
     }
@@ -151,25 +154,29 @@ class PlayActivity : AppCompatActivity(), View.OnClickListener, CompoundButton.O
             if(isChecked){
                 webView.visibility = View.VISIBLE
                 etMessage.visibility = View.VISIBLE
-                btSend.visibility = View.VISIBLE
+                ibtSend.visibility = View.VISIBLE
                 loadWebView()
             }else{
                 webView.visibility = View.GONE
                 etMessage.visibility = View.GONE
-                btSend.visibility = View.GONE
+                ibtSend.visibility = View.GONE
                 unloadWebView()
             }
         }
     }
 
-    private fun sendGoEasyMessage(message: String){
+    private fun sendGoEasyMessage(){
+        val message = etMessage.text.toString()
+        if(TextUtils.isEmpty(message)) {
+            return
+        }
         HttpMaster.post("http://rest-hangzhou.goeasy.io/publish")
                 .parames("appkey", "BC-6a9b6c468c894389881bc1df7d90cddb")
                 .parames("channel", channel)
                 .parames("content", message)
                 .enqueue(object : StringListener(){
                     override fun onSuccess(s: String?) {
-                        Logger.d(s)
+                        etMessage.setText("")
                     }
 
                     override fun onFailure(e: String?) {
