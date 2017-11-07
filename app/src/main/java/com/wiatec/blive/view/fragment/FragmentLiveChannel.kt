@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,13 +23,10 @@ import com.px.common.utils.NetUtil
 import com.px.common.utils.SPUtil
 import com.wiatec.blive.R
 import com.wiatec.blive.adapter.LiveChannelAdapter
-import com.wiatec.blive.instance.KEY_AUTH_USER_ID
-import com.wiatec.blive.instance.KEY_CHANNEL_MESSAGE
-import com.wiatec.blive.instance.KEY_PLAY_TYPE
-import com.wiatec.blive.instance.KEY_URL
+import com.wiatec.blive.instance.*
+import com.wiatec.blive.pay.PayResultInfo
 import com.wiatec.blive.pay.PayInfo
 import com.wiatec.blive.pay.PayPalManager
-import com.wiatec.blive.pay.PayResultInfo
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.presenter.LiveFragmentPresenter
@@ -113,12 +111,12 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
             playLiveChannel(channelInfo)
             return
         }
-        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
-        if(userId <= 0){
+        val username = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+        if(TextUtils.isEmpty(username)){
             EmojiToast.show("you have no sign in", EmojiToast.EMOJI_SAD)
             jumpToAuth()
         }
-        presenter!!.validatePay(userId, channelInfo.userId, "")
+        presenter!!.validatePay(username, channelInfo.userId, "")
     }
 
     override fun onValidatePay(execute: Boolean, resultInfo: ResultInfo<PayResultInfo>?) {
@@ -161,8 +159,12 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
 
     override fun paySuccess(paymentId: String) {
         Logger.d(paymentId)
-        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
-        presenter!!.validatePay(userId, mChannelInfo!!.userId, paymentId)
+        val username = SPUtil.get(KEY_AUTH_USERNAME, "") as String
+        if(TextUtils.isEmpty(username)){
+            EmojiToast.show("you have no sign in", EmojiToast.EMOJI_SAD)
+            jumpToAuth()
+        }
+        presenter!!.validatePay(username, mChannelInfo!!.userId, paymentId)
     }
 
     override fun customerCancel(error: String) {

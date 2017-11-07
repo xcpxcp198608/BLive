@@ -29,9 +29,9 @@ class LiveFragmentPresenter(val liveChannel: LiveChannel): BasePresenter<LiveCha
         })
     }
 
-    fun validatePay(payerId: Int, publisherId: Int, paymentId: String){
+    fun validatePay(payerName: String, publisherId: Int, paymentId: String){
         if(TextUtils.isEmpty(paymentId)){
-            payProvider.validatePay1(payerId, publisherId, object : LoadListener<ResultInfo<PayResultInfo>> {
+            payProvider.validatePay1(payerName, publisherId, object : LoadListener<ResultInfo<PayResultInfo>> {
                 override fun onSuccess(execute: Boolean, t: ResultInfo<PayResultInfo>?) {
                     liveChannel.onValidatePay(execute, t)
                 }
@@ -41,7 +41,7 @@ class LiveFragmentPresenter(val liveChannel: LiveChannel): BasePresenter<LiveCha
                 }
             })
         }else {
-            payProvider.validatePay(payerId, publisherId, paymentId, object : LoadListener<ResultInfo<PayResultInfo>> {
+            payProvider.validatePay(payerName, publisherId, paymentId, object : LoadListener<ResultInfo<PayResultInfo>> {
                 override fun onSuccess(execute: Boolean, t: ResultInfo<PayResultInfo>?) {
                     liveChannel.onValidatePay(execute, t)
                 }

@@ -4,8 +4,11 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.text.TextUtils
 import android.view.View
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
@@ -17,8 +20,10 @@ import com.px.common.utils.SPUtil
 import com.wiatec.blive.R
 import com.wiatec.blive.instance.KEY_AUTH_PREVIEW_PATH
 import com.wiatec.blive.instance.KEY_AUTH_PREVIEW_URL
+import com.wiatec.blive.instance.KEY_AUTH_USER_ID
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
+import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.presenter.UserSettingsPresenter
 import com.wiatec.blive.utils.AuthUtils
 import com.wiatec.blive.utils.WindowUtil
@@ -39,6 +44,7 @@ class UserSettingsActivity : BaseActivity<UserSettings, UserSettingsPresenter>()
         setContentView(R.layout.activity_user_setting)
         initToolBar()
         initPreview()
+        presenter!!.loadUserSettings()
     }
 
     private fun initToolBar() {
@@ -59,6 +65,47 @@ class UserSettingsActivity : BaseActivity<UserSettings, UserSettingsPresenter>()
         ImageMaster.load(previewUrl, ivPreview, R.drawable.img_holder_preview,
                 R.drawable.img_error_preview)
         ivPreview.setOnClickListener(this)
+    }
+
+    override fun onLoadUserInfo(execute: Boolean, userInfo: UserInfo?) {
+        if(execute && userInfo != null){
+            tvChannelPrice.text = "$" + userInfo.channelInfo!!.price.toString()
+            ibtPriceEdit.setOnClickListener { showPriceEditDialog(userInfo) }
+        }else{
+            EmojiToast.show("user information load fail", EmojiToast.EMOJI_SAD)
+        }
+    }
+
+    private fun showPriceEditDialog(userInfo: UserInfo){
+        var newPrice = 0f
+        MaterialDialog.Builder(this@UserSettingsActivity)
+                .title("Edit Price")
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input("type in new price", "", false,
+                        MaterialDialog.InputCallback { dialog, input ->
+                            try {
+                                newPrice = input.toString().toFloat()
+                                val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+                                if(userId > 0) {
+                                    presenter!!.updatePrice(ChannelInfo(newPrice, userId))
+                                }
+                            }catch (e: Exception){
+                                EmojiToast.show("input format error", EmojiToast.EMOJI_SAD)
+                            }
+                        })
+                .show()
+    }
+
+    override fun onUpdatePrice(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
+        if(execute && resultInfo != null){
+            Logger.d(resultInfo.toString())
+            val channelInfo = resultInfo.t
+            if(channelInfo != null){
+                tvChannelPrice.text = "$" + channelInfo.price.toString()
+            }
+        }else{
+            EmojiToast.show("update fail", EmojiToast.EMOJI_SAD)
+        }
     }
 
     override fun onClick(v: View?) {

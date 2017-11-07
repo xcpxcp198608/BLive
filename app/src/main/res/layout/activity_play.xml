@@ -69,8 +69,7 @@
     <WebView
         android:id="@+id/webView"
         android:background="@android:color/transparent"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="60dp"
         android:layout_width="match_parent"
         android:layout_height="100dp">
     </WebView>

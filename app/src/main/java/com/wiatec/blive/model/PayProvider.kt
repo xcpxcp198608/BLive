@@ -16,10 +16,10 @@ import retrofit2.http.Path
  */
 class PayProvider {
 
-    fun validatePay1(payerId: Int, publisherId: Int,
+    fun validatePay1(payerName: String, publisherId: Int,
                           loadListener: LoadListener<ResultInfo<PayResultInfo>>){
         RMaster.retrofit.create(PayService::class.java)
-                .validate1(payerId, publisherId)
+                .validate1(payerName, publisherId)
                 .enqueue(object : Callback<ResultInfo<PayResultInfo>> {
                     override fun onResponse(call: Call<ResultInfo<PayResultInfo>>?, response: Response<ResultInfo<PayResultInfo>>?) {
                         Logger.d(response.toString())
@@ -42,10 +42,10 @@ class PayProvider {
                 })
     }
 
-    fun validatePay(payerId: Int, publisherId: Int, paymentId: String,
+    fun validatePay(payerName: String, publisherId: Int, paymentId: String,
                     loadListener: LoadListener<ResultInfo<PayResultInfo>>){
         RMaster.retrofit.create(PayService::class.java)
-                .validate(payerId, publisherId, paymentId)
+                .validate(payerName, publisherId, paymentId)
                 .enqueue(object : Callback<ResultInfo<PayResultInfo>> {
                     override fun onResponse(call: Call<ResultInfo<PayResultInfo>>?, response: Response<ResultInfo<PayResultInfo>>?) {
                         if(response == null) {

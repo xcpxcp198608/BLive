@@ -12,12 +12,12 @@ import retrofit2.http.Path
  */
 interface PayService {
 
-    @POST("pay/verify/{payerId}/{publisherId}/{paymentId}")
-    fun validate(@Path("payerId") payerId: Int,
+    @POST("pay/verify/{payerName}/{publisherId}/{paymentId}")
+    fun validate(@Path("payerName") payerName: String,
                  @Path("publisherId") publisherId: Int,
                  @Path("paymentId") paymentId: String): Call<ResultInfo<PayResultInfo>>
 
-    @POST("pay/verify/{payerId}/{publisherId}")
-    fun validate1(@Path("payerId") payerId: Int,
+    @POST("pay/verify/{payerName}/{publisherId}")
+    fun validate1(@Path("payerName") payerName: String,
                  @Path("publisherId") publisherId: Int): Call<ResultInfo<PayResultInfo>>
 }

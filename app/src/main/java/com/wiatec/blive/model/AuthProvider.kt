@@ -159,7 +159,7 @@ class AuthProvider{
                 })
     }
 
-    fun updateUserInfo(){
+    fun updateUserInfo(loadListener: LoadListener<UserInfo>?){
         val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
         if(userId <= 0 ) return
         RMaster.retrofit.create(AuthService::class.java)
@@ -173,13 +173,18 @@ class AuthProvider{
                             SPUtil.put(KEY_AUTH_ICON_URL, userInfo.icon)
                             SPUtil.put(KEY_AUTH_PREVIEW_URL, userInfo.channelInfo!!.preview)
                             SPUtil.put(KEY_AUTH_PUSH_URL, userInfo.channelInfo!!.url)
+                            loadListener?.onSuccess(true, userInfo)
+                        }else{
+                            loadListener?.onSuccess(false, null)
                         }
                     }
 
                     override fun onFailure(call: Call<UserInfo>?, t: Throwable?) {
                         if (t?.message != null) Logger.d(t.message)
+                        loadListener?.onSuccess(false, null)
                     }
                 })
     }
+
 
 }

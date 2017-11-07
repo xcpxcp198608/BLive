@@ -144,4 +144,28 @@ class ChannelProvider {
                 })
     }
 
+    fun updatePrice(channelInfo: ChannelInfo, loadListener: LoadListener<ResultInfo<ChannelInfo>>){
+        RMaster.retrofit.create(ChannelService::class.java)
+                .updatePrice(channelInfo)
+                .enqueue(object : Callback<ResultInfo<ChannelInfo>>{
+                    override fun onResponse(call: Call<ResultInfo<ChannelInfo>>?, response: Response<ResultInfo<ChannelInfo>>?) {
+                        if(response == null) {
+                            loadListener.onSuccess(false, null)
+                            return
+                        }
+                        val resultInfo = response.body()
+                        if(resultInfo != null){
+                            loadListener.onSuccess(true, resultInfo)
+                        }else{
+                            loadListener.onSuccess(false, null)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResultInfo<ChannelInfo>>?, t: Throwable?) {
+                        if (t?.message != null) Logger.d(t.message)
+                        loadListener.onSuccess(false, null)
+                    }
+                })
+    }
+
 }

@@ -1,10 +1,12 @@
 package com.wiatec.blive.presenter
 
 import com.px.common.utils.Logger
+import com.wiatec.blive.model.AuthProvider
 import com.wiatec.blive.model.ChannelProvider
 import com.wiatec.blive.model.LoadListener
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
+import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.view.activity.UserSettings
 import java.io.File
 
@@ -15,11 +17,35 @@ import java.io.File
 class UserSettingsPresenter(val userSettings: UserSettings): BasePresenter<UserSettings>() {
 
     private val channelProvider = ChannelProvider()
+    private val authProvider = AuthProvider()
 
     fun uploadPreviewImage(file: File){
         channelProvider.uploadPreviewImage(file, object: LoadListener<ResultInfo<ChannelInfo>>{
             override fun onSuccess(execute: Boolean, t: ResultInfo<ChannelInfo>?) {
                 userSettings.onUploadPreviewImage(execute, t)
+            }
+
+            override fun onFailure(e: String) {
+            }
+        })
+    }
+
+    fun loadUserSettings(){
+        authProvider.updateUserInfo(object : LoadListener<UserInfo>{
+            override fun onSuccess(execute: Boolean, t: UserInfo?) {
+                userSettings.onLoadUserInfo(execute, t)
+            }
+
+            override fun onFailure(e: String) {
+
+            }
+        })
+    }
+
+    fun updatePrice(channelInfo: ChannelInfo){
+        channelProvider.updatePrice(channelInfo, object : LoadListener<ResultInfo<ChannelInfo>>{
+            override fun onSuccess(execute: Boolean, t: ResultInfo<ChannelInfo>?) {
+                userSettings.onUpdatePrice(execute, t)
             }
 
             override fun onFailure(e: String) {

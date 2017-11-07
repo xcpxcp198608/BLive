@@ -27,4 +27,8 @@ interface ChannelService {
     @PUT("channel/status/{activate}/{userId}")
     fun updateChannelStatus(@Path("activate") activate:Int,  @Path("userId")userId: Int):
             Call<ResultInfo<ChannelInfo>>
+
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    @PUT("channel/price")
+    fun updatePrice(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
 }

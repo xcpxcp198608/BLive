@@ -32,6 +32,11 @@ class ChannelInfo: Serializable {
         this.userId = userId
     }
 
+    constructor(price: Float, userId: Int) {
+        this.price = price
+        this.userId = userId
+    }
+
     constructor(title: String, message: String, userId: Int, holder:Int) {
         this.title = title
         this.userId = userId
