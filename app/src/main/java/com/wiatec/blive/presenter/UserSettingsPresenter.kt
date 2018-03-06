@@ -1,7 +1,6 @@
 package com.wiatec.blive.presenter
 
-import com.px.common.utils.Logger
-import com.wiatec.blive.model.AuthProvider
+import com.wiatec.blive.model.UserProvider
 import com.wiatec.blive.model.ChannelProvider
 import com.wiatec.blive.model.LoadListener
 import com.wiatec.blive.pojo.ChannelInfo
@@ -17,7 +16,7 @@ import java.io.File
 class UserSettingsPresenter(val userSettings: UserSettings): BasePresenter<UserSettings>() {
 
     private val channelProvider = ChannelProvider()
-    private val authProvider = AuthProvider()
+    private val authProvider = UserProvider()
 
     fun uploadPreviewImage(file: File){
         channelProvider.uploadPreviewImage(file, object: LoadListener<ResultInfo<ChannelInfo>>{
@@ -30,8 +29,8 @@ class UserSettingsPresenter(val userSettings: UserSettings): BasePresenter<UserS
         })
     }
 
-    fun loadUserSettings(){
-        authProvider.updateUserInfo(object : LoadListener<UserInfo>{
+    fun loadUserInfo(){
+        authProvider.getUserInfo(object : LoadListener<UserInfo>{
             override fun onSuccess(execute: Boolean, t: UserInfo?) {
                 userSettings.onLoadUserInfo(execute, t)
             }

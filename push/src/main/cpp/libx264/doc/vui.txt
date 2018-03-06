@@ -140,7 +140,7 @@ by Christian Heine ( sennindemokrit at gmx dot net )
 --------------------------
 
 * What is it?
-    A videophile setting. The average user won't ever notice a difference.
+    A videophile setting. The average getUserInfo won't ever notice a difference.
     Due to a weakness of the eye, it is often economic to reduce the number of
     chroma samples in a process called subsampling. In particular x264 uses
     only one chroma sample of each chroma channel every block of 2x2 luma

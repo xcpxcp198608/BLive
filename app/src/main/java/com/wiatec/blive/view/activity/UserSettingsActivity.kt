@@ -5,9 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
-import android.text.TextUtils
 import android.view.View
-import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -44,11 +42,11 @@ class UserSettingsActivity : BaseActivity<UserSettings, UserSettingsPresenter>()
         setContentView(R.layout.activity_user_setting)
         initToolBar()
         initPreview()
-        presenter!!.loadUserSettings()
+        presenter!!.loadUserInfo()
     }
 
     private fun initToolBar() {
-        val paddingTop = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT )
+        val paddingTop = if (Build.VERSION.SDK_INT < 19)
             WindowUtil.getStatusBarHeight(this) else 0
         toolBarMain.setPadding(0, paddingTop, 0, 0)
         toolBarMain.title = getString(R.string.settings)
@@ -72,19 +70,18 @@ class UserSettingsActivity : BaseActivity<UserSettings, UserSettingsPresenter>()
             tvChannelPrice.text = "$" + userInfo.channelInfo!!.price.toString()
             ibtPriceEdit.setOnClickListener { showPriceEditDialog(userInfo) }
         }else{
-            EmojiToast.show("user information load fail", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("getUserInfo information load fail", EmojiToast.EMOJI_SAD)
         }
     }
 
     private fun showPriceEditDialog(userInfo: UserInfo){
-        var newPrice = 0f
         MaterialDialog.Builder(this@UserSettingsActivity)
                 .title("Edit Price")
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .input("type in new price", "", false,
-                        MaterialDialog.InputCallback { dialog, input ->
+                        MaterialDialog.InputCallback { _, input ->
                             try {
-                                newPrice = input.toString().toFloat()
+                                val newPrice = input.toString().toFloat()
                                 val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
                                 if(userId > 0) {
                                     presenter!!.updatePrice(ChannelInfo(newPrice, userId))
@@ -99,9 +96,13 @@ class UserSettingsActivity : BaseActivity<UserSettings, UserSettingsPresenter>()
     override fun onUpdatePrice(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
         if(execute && resultInfo != null){
             Logger.d(resultInfo.toString())
-            val channelInfo = resultInfo.t
-            if(channelInfo != null){
-                tvChannelPrice.text = "$" + channelInfo.price.toString()
+            if(resultInfo.code == 200) {
+                val channelInfo = resultInfo.data
+                if (channelInfo != null) {
+                    tvChannelPrice.text = "$" + channelInfo.price.toString()
+                }
+            }else{
+                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
         }else{
             EmojiToast.show("update fail", EmojiToast.EMOJI_SAD)
@@ -155,11 +156,11 @@ class UserSettingsActivity : BaseActivity<UserSettings, UserSettingsPresenter>()
         if(execute && resultInfo != null){
             val previewFullPath = getExternalFilesDir("icon").absolutePath + "/" + currentFileName
             SPUtil.put(KEY_AUTH_PREVIEW_PATH, previewFullPath)
-            SPUtil.put(KEY_AUTH_PREVIEW_URL, resultInfo.t!!.preview)
+            SPUtil.put(KEY_AUTH_PREVIEW_URL, resultInfo.data!!.preview)
             ImageMaster.load(this@UserSettingsActivity, previewFullPath, ivPreview, R.drawable.img_holder_preview,
                     R.drawable.img_error_preview)
         }else{
-            EmojiToast.show("user info error, try signin again", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("getUserInfo info error, try signin again", EmojiToast.EMOJI_SAD)
         }
     }
 }

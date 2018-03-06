@@ -1,7 +1,7 @@
 package com.wiatec.blive.pojo
 
 /**
- * the result that return to user after user's request
+ * the result that return to getUserInfo after getUserInfo's request
  */
 class ResultInfo<T> {
 
@@ -11,29 +11,23 @@ class ResultInfo<T> {
     var code: Int = 0
 
     /**
-     * status description
-     */
-    var status: String? = null
-
-    /**
      * custom message
      */
     var message: String? = null
 
-    var t: T? = null
+    var data: T? = null
 
     /**
      * data
      */
-    var data: List<T>? = null
+    var dataList: List<T>? = null
 
     override fun toString(): String {
         return "ResultInfo{" +
                 "code=" + code +
-                ", status='" + status + '\'' +
                 ", message='" + message + '\'' +
-                ", t=" + t +
                 ", data=" + data +
+                ", dataList=" + dataList +
                 '}'
     }
 
@@ -60,7 +54,7 @@ class ResultInfo<T> {
         val CODE_INVALID = 400
 
         /**
-         * user permission error (UserName , Password , Token error)
+         * getUserInfo permission error (UserName , Password , Token error)
          */
         val CODE_UNAUTHORIZED = 401
 
@@ -95,7 +89,7 @@ class ResultInfo<T> {
         val STATUS_INVALID = "Request Invalid"
 
         /**
-         * user permission error (UserName , Password , Token error)
+         * getUserInfo permission error (UserName , Password , Token error)
          */
         val STATUS_UNAUTHORIZED = "Authorization Error"
 

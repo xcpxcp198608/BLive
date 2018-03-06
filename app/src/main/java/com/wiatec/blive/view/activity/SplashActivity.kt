@@ -1,22 +1,20 @@
 package com.wiatec.blive.view.activity
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Window
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.px.common.http.Bean.DownloadInfo
 import com.px.common.http.HttpMaster
-import com.px.common.http.Listener.DownloadListener
+import com.px.common.http.listener.DownloadListener
+import com.px.common.http.pojo.DownloadInfo
 import com.px.common.utils.*
 
 import com.wiatec.blive.R
 import com.wiatec.blive.instance.*
 import com.wiatec.blive.pojo.*
 import com.wiatec.blive.presenter.SplashPresenter
-import com.wiatec.blive.task.DownloadUserIcon
 import kotlinx.android.synthetic.main.activity_splash.*
 
 
@@ -74,7 +72,7 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
                 .name(upgradeInfo.name)
                 .path(FileUtil.getDownloadPath())
                 .url(upgradeInfo.url)
-                .startDownload(object : DownloadListener{
+                .startDownload(object : DownloadListener {
                     override fun onPending(downloadInfo: DownloadInfo?) {
                     }
 
@@ -127,33 +125,6 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
             }
         }
         presenter!!.updateUserInfo()
-        presenter!!.getPush()
-    }
-
-    override fun getPush(execute: Boolean, pushInfo: PushInfo?) {
-        if(execute && pushInfo != null) {
-            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data!!.push_full_url)
-            val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
-            if(userId == 0){
-                EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
-            }else {
-                presenter!!.updateChannel(ChannelInfo(pushInfo.data!!.push_full_url!!,
-                        pushInfo.data!!.play_url!!, userId))
-            }
-        }else{
-            EmojiToast.show("live server error", EmojiToast.EMOJI_SAD)
-            jumpToMain()
-        }
-    }
-
-    override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
-        if(execute && resultInfo != null) {
-            if(resultInfo.code != ResultInfo.CODE_OK){
-                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
-            }
-        }else{
-            EmojiToast.show("signin server error", EmojiToast.EMOJI_SAD)
-        }
         jumpToMain()
     }
 

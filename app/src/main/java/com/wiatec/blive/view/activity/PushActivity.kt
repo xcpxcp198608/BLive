@@ -3,13 +3,18 @@ package com.wiatec.blive.view.activity
 import android.content.res.Configuration
 import android.hardware.Camera
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.text.TextUtils
 import android.view.*
-import android.webkit.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ScrollView
+import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.faucamp.simplertmp.RtmpHandler
+import com.luck.picture.lib.tools.Constant
 import com.px.common.utils.Logger
 
 import com.wiatec.blive.R
@@ -23,14 +28,16 @@ import java.lang.IllegalStateException
 import java.net.SocketException
 import com.px.common.utils.EmojiToast
 import com.px.common.utils.SPUtil
-import com.px.common.utils.TimeUtil
 import com.seu.magicfilter.utils.MagicFilterType
 import com.wiatec.blive.animator.Rotation
 import com.wiatec.blive.instance.*
 import com.wiatec.blive.pojo.ChannelInfo
 import com.wiatec.blive.pojo.ResultInfo
 import com.wiatec.blive.presenter.PushPresenter
-import kotlinx.android.synthetic.main.activity_push.*
+import org.java_websocket.client.WebSocketClient
+import org.java_websocket.handshake.ServerHandshake
+import java.lang.StringBuilder
+import java.net.URI
 
 
 class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickListener,
@@ -42,7 +49,8 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     private var publisher: SrsPublisher? = null
     private var recordPath = ""
     private var isRecording = false
-    private var isJSLoaded = false
+    private var webSocketClient: WebSocketClient? = null
+    private var stringBuilder: StringBuilder? = null
 
     override fun createPresenter(): PushPresenter = PushPresenter(this)
 
@@ -57,7 +65,6 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         recordPath = getExternalFilesDir("record").absolutePath
         initView()
         initSpinner()
-        initWebView()
     }
 
     private fun initView() {
@@ -120,6 +127,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
             isPushing = false
             isRecording = false
         }
+        closeWS()
     }
 
     private fun startRecord(){
@@ -137,6 +145,11 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
         isRecording = false
     }
 
+    override fun onPause() {
+        super.onPause()
+        stopPush()
+    }
+
     override fun onStop() {
         super.onStop()
         stopPush()
@@ -144,7 +157,9 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
 
     override fun onDestroy() {
         super.onDestroy()
-        releaseWebView()
+        stopPush()
+        closeWS()
+        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onClick(v: View?) {
@@ -159,7 +174,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                     message = ""
                 }
                 val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
-                presenter!!.updateChannelName(ChannelInfo(title, message, userId, holder = 0))
+                presenter!!.updateChannelTitleAndMessage(ChannelInfo(title, message, userId, holder = 0))
             }
             R.id.ibtStart -> {
                 if(isPushing){
@@ -228,7 +243,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
             }
         }else{
-            EmojiToast.show("network unstable", EmojiToast.EMOJI_SAD)
+            EmojiToast.show("channel setting failure", EmojiToast.EMOJI_SAD)
         }
     }
 
@@ -237,7 +252,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     }
 
     override fun onNetworkResume() {
-        EmojiToast.show("network unstable", EmojiToast.EMOJI_SAD)
+        Toast.makeText(this@PushActivity, "network unstable", Toast.LENGTH_SHORT).show()
     }
 
     override fun onEncodeIllegalArgumentException(e: IllegalArgumentException?) {
@@ -253,10 +268,11 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     }
 
     override fun onRecordStarted(msg: String?) {
-        EmojiToast.show("record start", EmojiToast.EMOJI_SMILE)
+        Toast.makeText(this@PushActivity, "record started", Toast.LENGTH_SHORT).show()
     }
 
     override fun onRecordFinished(msg: String?) {
+        Toast.makeText(this@PushActivity, "record finished", Toast.LENGTH_SHORT).show()
         Logger.d("onRecordFinished->" + msg)
     }
 
@@ -275,6 +291,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onRtmpConnected(msg: String?) {
         Logger.d("onRtmpConnected")
         presenter!!.updateChannelStatus(ACTIVATE)
+        initWS()
         ibtRecord.isEnabled = true
     }
 
@@ -291,6 +308,7 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
     override fun onRtmpDisconnected() {
         Logger.d("onRtmpDisconnected")
         presenter!!.updateChannelStatus(DEACTIVATE)
+
     }
 
     override fun onRtmpVideoFpsChanged(fps: Double) {
@@ -363,52 +381,56 @@ class PushActivity : BaseActivity<Push, PushPresenter>(), Push, View.OnClickList
                 .show()
     }
 
-    class MyWebViewClient: WebViewClient(){
-        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean = true
-    }
-
-    private fun initWebView(){
-        webView.setWebViewClient(MyWebViewClient())
-        webView.setBackgroundColor(0)
-        val webSettings = webView.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.useWideViewPort = true
-        webSettings.loadWithOverviewMode = true
-        webSettings.setSupportZoom(true)
-        webSettings.builtInZoomControls = true
-        webSettings.displayZoomControls = false
-        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
-        webSettings.allowFileAccess = true
-        webSettings.javaScriptCanOpenWindowsAutomatically = true
-        webSettings.loadsImagesAutomatically = true
-        webSettings.defaultTextEncodingName = "utf-8"
-        webView.setWebChromeClient(WebChromeClient())
-        loadWebView()
-    }
-
-    private fun loadWebView(){
-        isJSLoaded = false
-        webView.loadUrl("http://blive.protv.company:8804/html/danmu.html")
-        webView.setWebChromeClient(object: WebChromeClient(){
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                if(newProgress >= 100){
-                    if(!isJSLoaded) {
-                        val channel = SPUtil.get(KEY_CHANNEL_ID, "") as String
-                        webView.loadUrl("javascript:showDanMu('$channel')")
-                        isJSLoaded = true
-                    }
-                }
+    private fun initWS() {
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        webSocketClient = object : WebSocketClient(URI(WS_URL + userId + "/" + userId)) {
+            override fun onOpen(handshakedata: ServerHandshake?) {
+                Logger.d("ws on open")
             }
-        })
+
+            override fun onClose(code: Int, reason: String?, remote: Boolean) {
+                Logger.d("ws on close")
+            }
+
+            override fun onMessage(message: String?) {
+                Logger.d("ws on message " + message)
+                val msg = handler.obtainMessage()
+                msg.what = 1
+                msg.obj = message
+                handler.sendMessage(msg)
+            }
+
+            override fun onError(ex: java.lang.Exception?) {
+                Logger.d("ws on error " + ex?.message)
+            }
+        }
+        webSocketClient?.connect()
     }
 
-    private fun releaseWebView(){
-        if (webView != null) {
-            webView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
-            webView.clearHistory()
-            (webView.parent as ViewGroup).removeView(webView)
-            webView.destroy()
+    private val handler = object: Handler(Looper.getMainLooper()){
+
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+            if(msg?.what == 1){
+                val comment = msg.obj as String
+                showComment(comment)
+            }
         }
     }
 
+    private fun closeWS(){
+        if(webSocketClient != null){
+            webSocketClient?.close()
+        }
+    }
+
+    private fun showComment(comment: String){
+       if(stringBuilder == null) {
+           stringBuilder = StringBuilder()
+       }
+       stringBuilder!!.append("\r\n")
+       stringBuilder!!.append(comment)
+       tvComment.text = stringBuilder.toString()
+       scrollView.fullScroll(ScrollView.FOCUS_DOWN)
+    }
 }

@@ -1,6 +1,6 @@
 package com.wiatec.blive.model;
 
-import com.px.common.utils.CommonApplication;
+import com.px.common.constant.CommonApplication;
 import com.px.common.utils.FileUtil;
 import com.px.common.utils.Logger;
 import com.px.common.utils.TimeUtil;
@@ -14,7 +14,6 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -33,7 +32,7 @@ public class LiveRecordsProvider {
                     .map(new Function<String, File[]>() {
                         @Override
                         public File[] apply(String s) throws Exception {
-                            return FileUtil.listFile(s);
+                            return FileUtil.listFiles(s);
                         }
                     })
                     .map(new Function<File[], List<LiveRecordsInfo>>() {

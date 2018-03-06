@@ -40,7 +40,7 @@ obj/local/armeabi/objs/AvcEncoder/com_alex_livertmppushsdk_FdkAacEncode.o: \
  C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/asm-generic/signal.h \
  C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/asm/sigcontext.h \
  C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sys/ucontext.h \
- C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sys/user.h \
+ C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sys/getUserInfo.h \
  C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sched.h
 
 jni/com_alex_livertmppushsdk_FdkAacEncode.h:
@@ -125,6 +125,6 @@ C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/andr
 
 C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sys/ucontext.h:
 
-C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sys/user.h:
+C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sys/getUserInfo.h:
 
 C:/Users/Administrator/AppData/Local/Android/Ndk/android-ndk-r10e/platforms/android-14/arch-arm/usr/include/sched.h:

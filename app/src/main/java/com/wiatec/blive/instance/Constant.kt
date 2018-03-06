@@ -1,7 +1,5 @@
 package com.wiatec.blive.instance
 
-import android.os.Environment
-import com.px.common.utils.CommonApplication
 //import com.paypal.android.sdk.payments.PayPalConfiguration
 
 
@@ -9,9 +7,8 @@ import com.px.common.utils.CommonApplication
 /**
  * constant
  */
-const val BASE_URL = "http://blive.protv.company:8080/blive/"
-const val RTMP_TOKEN_URL = "http://apildlive.protv.company/v1/ldlive_get_url.do"
-const val RTMP_TOKEN = "36d4284ce8e188eb75bda72cb1de28c7"
+const val BASE_URL = "https://blive.bvision.live:8443/blive/"
+const val WS_URL = "wss://blive.bvision.live:8443/blive/live/"
 const val ACTIVATE = 1
 const val DEACTIVATE = 0
 

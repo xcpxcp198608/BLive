@@ -2,7 +2,7 @@ package com.wiatec.blive.presenter
 
 import com.px.common.utils.SPUtil
 import com.wiatec.blive.instance.KEY_AUTH_USER_ID
-import com.wiatec.blive.model.AuthProvider
+import com.wiatec.blive.model.UserProvider
 import com.wiatec.blive.model.ChannelProvider
 import com.wiatec.blive.model.LoadListener
 import com.wiatec.blive.pojo.ChannelInfo
@@ -17,7 +17,7 @@ import java.io.File
  */
 class MainPresenter(var main: Main): BasePresenter<Main>() {
 
-    private val authProvider: AuthProvider = AuthProvider()
+    private val authProvider: UserProvider = UserProvider()
     private val channelProvider: ChannelProvider = ChannelProvider()
 
     fun deactivateChannel(){

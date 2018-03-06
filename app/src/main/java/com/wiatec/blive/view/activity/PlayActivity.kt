@@ -1,15 +1,16 @@
 package com.wiatec.blive.view.activity
 
+import android.content.Context
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.webkit.*
-import android.widget.CompoundButton
-import com.px.common.http.HttpMaster
-import com.px.common.http.Listener.StringListener
+import android.widget.ScrollView
 import com.px.common.utils.Logger
 
 import com.wiatec.blive.R
@@ -17,15 +18,25 @@ import com.wiatec.blive.instance.KEY_PLAY_TYPE
 import com.wiatec.blive.instance.KEY_PLAY_TYPE_LOCAL
 import kotlinx.android.synthetic.main.activity_play.*
 import android.widget.TextView
+import com.px.common.utils.SPUtil
+import com.wiatec.blive.instance.KEY_AUTH_USER_ID
+import com.wiatec.blive.instance.WS_URL
 import com.wiatec.blive.pojo.ChannelInfo
+import org.java_websocket.client.WebSocketClient
+import org.java_websocket.handshake.ServerHandshake
+import java.lang.StringBuilder
+import java.net.URI
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.view.inputmethod.InputMethodManager
 
 
-class PlayActivity : AppCompatActivity(), View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+class PlayActivity : AppCompatActivity(), View.OnClickListener {
 
     private var url: String = ""
+    private var groupId: String = ""
     private var channelInfo: ChannelInfo? = null
-    private var channel = ""
-    private var isJSLoaded = false
+    private var webSocketClient: WebSocketClient? = null
+    private var stringBuilder: StringBuilder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,34 +46,31 @@ class PlayActivity : AppCompatActivity(), View.OnClickListener, CompoundButton.O
         channelInfo = intent.getSerializableExtra("channelInfo") as ChannelInfo?
         if(channelInfo == null) return
         url = channelInfo!!.playUrl!!
-        channel = channelInfo!!.id.toString()
+        groupId = channelInfo!!.userId.toString()
         val message = channelInfo!!.message
         val type = intent.getStringExtra(KEY_PLAY_TYPE)
         if(!TextUtils.isEmpty(message)){
             tvChannelMessage.text = message
             tvChannelMessage.visibility = View.VISIBLE
         }
-        ibtSend.setOnClickListener(this)
-        switchDanMu.setOnCheckedChangeListener(this)
+        ibtEdit.setOnClickListener(this)
         etMessage.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_SEND){
-                sendGoEasyMessage()
+                sendComment()
                 return@OnEditorActionListener true
             }
             false
         })
         play(url, type)
-        initWebView()
     }
 
     override fun onStart() {
         super.onStart()
-        if(switchDanMu.isChecked){
-            loadWebView()
-        }
+        initWS()
     }
 
     private fun play(url: String, type: String){
+        progressBar.visibility = View.VISIBLE
         Logger.d(url)
         if(TextUtils.isEmpty(type)) {
             videoView.setVideoPath(url)
@@ -80,107 +88,88 @@ class PlayActivity : AppCompatActivity(), View.OnClickListener, CompoundButton.O
         }
     }
 
-    class MyWebViewClient: WebViewClient(){
-        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean = true
-    }
-
-    private fun initWebView(){
-        webView.setWebViewClient(MyWebViewClient())
-        webView.setBackgroundColor(0)
-        val webSettings = webView.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.useWideViewPort = true
-        webSettings.loadWithOverviewMode = true
-        webSettings.setSupportZoom(true)
-        webSettings.builtInZoomControls = true
-        webSettings.displayZoomControls = false
-        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
-        webSettings.allowFileAccess = true
-        webSettings.javaScriptCanOpenWindowsAutomatically = true
-        webSettings.loadsImagesAutomatically = true
-        webSettings.defaultTextEncodingName = "utf-8"
-
-    }
-
-    private fun loadWebView(){
-        isJSLoaded = false
-        webView.loadUrl("http://blive.protv.company:8804/html/danmu.html")
-        webView.setWebChromeClient(object: WebChromeClient(){
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                if(newProgress >= 100){
-                    if(!isJSLoaded) {
-                        Logger.d(newProgress.toString())
-                        webView.loadUrl("javascript:showDanMu('$channel')")
-                        isJSLoaded = true
-                    }
-                }
-            }
-        })
-    }
-
-    private fun unloadWebView(){
-        if (webView != null) {
-            webView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
-            isJSLoaded = false
-        }
-    }
-
-    private fun releaseWebView(){
-        if (webView != null) {
-            webView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null)
-            isJSLoaded = false
-            webView.clearHistory()
-            (webView.parent as ViewGroup).removeView(webView)
-            webView.destroy()
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         videoView.stopPlayback()
-        releaseWebView()
+        closeWS()
     }
 
     override fun onClick(v: View?) {
         when(v!!.id){
-            R.id.ibtSend -> {
-                sendGoEasyMessage()
-            }
-        }
-    }
-
-    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-        if(buttonView!!.id == R.id.switchDanMu){
-            if(isChecked){
-                webView.visibility = View.VISIBLE
+            R.id.ibtEdit -> {
                 etMessage.visibility = View.VISIBLE
-                ibtSend.visibility = View.VISIBLE
-                loadWebView()
-            }else{
-                webView.visibility = View.GONE
-                etMessage.visibility = View.GONE
-                ibtSend.visibility = View.GONE
-                unloadWebView()
+                etMessage.isFocusable = true
+                etMessage.isFocusableInTouchMode = true
+                etMessage.requestFocus()
+                val inputManager = etMessage.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.showSoftInput(etMessage, 0)
             }
         }
     }
 
-    private fun sendGoEasyMessage(){
+    private fun initWS() {
+        val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
+        webSocketClient = object : WebSocketClient(URI(WS_URL + groupId + "/" + userId)) {
+            override fun onOpen(handshakedata: ServerHandshake?) {
+                Logger.d("ws on open")
+            }
+
+            override fun onClose(code: Int, reason: String?, remote: Boolean) {
+                Logger.d("ws on close")
+            }
+
+            override fun onMessage(message: String?) {
+                Logger.d("ws on message " + message)
+                val msg = handler.obtainMessage()
+                msg.what = 1
+                msg.obj = message
+                handler.sendMessage(msg)
+            }
+
+            override fun onError(ex: java.lang.Exception?) {
+                Logger.d("ws on error " + ex?.message)
+            }
+        }
+        webSocketClient?.connect()
+    }
+
+    private val handler = object: Handler(Looper.getMainLooper()){
+
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+            if(msg?.what == 1){
+                val comment = msg.obj as String
+                showComment(comment)
+            }
+        }
+    }
+
+    private fun closeWS(){
+        if(webSocketClient != null){
+            webSocketClient?.close()
+        }
+    }
+
+    private fun showComment(comment: String){
+        if(stringBuilder == null) {
+            stringBuilder = StringBuilder()
+        }
+        stringBuilder!!.append("\r\n")
+        stringBuilder!!.append(comment)
+        tvComment.text = stringBuilder.toString()
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN)
+    }
+
+    private fun sendComment(){
         val message = etMessage.text.toString()
-        if(TextUtils.isEmpty(message)) {
+        if(TextUtils.isEmpty(message)){
             return
         }
-        HttpMaster.post("http://rest-hangzhou.goeasy.io/publish")
-                .parames("appkey", "BC-6a9b6c468c894389881bc1df7d90cddb")
-                .parames("channel", channel)
-                .parames("content", message)
-                .enqueue(object : StringListener(){
-                    override fun onSuccess(s: String?) {
-                        etMessage.setText("")
-                    }
-
-                    override fun onFailure(e: String?) {
-                    }
-                })
+        if(webSocketClient != null){
+            webSocketClient!!.send("1/$groupId/$message")
+        }
+        etMessage.setText("")
+        etMessage.visibility = View.GONE
     }
+
 }

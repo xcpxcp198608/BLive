@@ -15,22 +15,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/ibtSwitchCamera"
-            android:layout_margin="6dp"
+        <Spinner
+            android:background="@drawable/bg_bt_auth"
+            android:id="@+id/spFilters"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="115dp"
             android:layout_gravity="right"
-            android:background="@drawable/bg_bt_switch_camera"
+            android:padding="0dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/switch_camera" />
-
-        <ImageButton
-            android:id="@+id/ibtRecord"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="10dp"
-            android:background="@drawable/bg_bt_record"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <Spinner
             android:background="@drawable/bg_bt_auth"
@@ -44,35 +39,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <Spinner
-            android:background="@drawable/bg_bt_auth"
-            android:id="@+id/spFilters"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="115dp"
-            android:layout_gravity="right"
-            android:padding="0dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
         <ImageButton
-            android:id="@+id/ibtStart"
-            android:layout_margin="10dp"
-            android:elevation="8dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@drawable/bg_bt_play"
+            android:id="@+id/ibtSwitchCamera"
+            android:layout_margin="6dp"
+            android:layout_gravity="right"
+            android:background="@drawable/bg_bt_switch_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/play_pause" />
-
-        <WebView
-            android:id="@+id/webView"
-            android:background="@android:color/transparent"
-            android:layout_marginTop="50dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </WebView>
+            android:contentDescription="@string/switch_camera" />
 
         <LinearLayout
             android:id="@+id/llSetting"
@@ -119,8 +93,41 @@
 
         </LinearLayout>
 
+        <ScrollView
+            android:scrollbars="none"
+            android:layout_gravity="bottom"
+            android:id="@+id/scrollView"
+            android:layout_width="280dp"
+            android:layout_height="200dp">
+
+            <TextView
+                android:padding="3dp"
+                android:id="@+id/tvComment"
+                android:textSize="16sp"
+                android:textColor="@android:color/holo_blue_light"
+                tools:text="guest:fsdfdsf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </ScrollView>
+
+        <ImageButton
+            android:id="@+id/ibtStart"
+            android:layout_margin="10dp"
+            android:elevation="8dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@drawable/bg_bt_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/play_pause" />
+
+        <ImageButton
+            android:id="@+id/ibtRecord"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_bt_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </FrameLayout>
-
-
-
 </FrameLayout>

@@ -16,6 +16,7 @@ import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.px.common.image.ImageMaster
 import com.px.common.utils.EmojiToast
+import com.px.common.utils.FileUtil
 import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.wiatec.blive.R
@@ -66,7 +67,7 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     }
 
     private fun initToolBar() {
-        val paddingTop = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT )
+        val paddingTop = if (Build.VERSION.SDK_INT < 19 )
             WindowUtil.getStatusBarHeight(this) else 0
         toolBarMain.setPadding(0, paddingTop, 0, 0)
         toolBarMain.title = getString(R.string.app_name)

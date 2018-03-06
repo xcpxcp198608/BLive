@@ -1,19 +1,17 @@
 package com.wiatec.blive.task
 
 import android.text.TextUtils
-import com.px.common.http.Bean.DownloadInfo
+import com.px.common.constant.CommonApplication
 import com.px.common.http.HttpMaster
-import com.px.common.http.Listener.DownloadListener
-import com.px.common.http.Listener.StringListener
-import com.px.common.utils.CommonApplication
+import com.px.common.http.listener.DownloadListener
+import com.px.common.http.pojo.DownloadInfo
 import com.px.common.utils.FileUtil
-import com.px.common.utils.Logger
 import com.px.common.utils.SPUtil
 import com.wiatec.blive.instance.KEY_AUTH_ICON_PATH
 import com.wiatec.blive.instance.KEY_AUTH_ICON_URL
 import com.wiatec.blive.instance.KEY_AUTH_PREVIEW_URL
 import com.wiatec.blive.instance.KEY_AUTH_USER_ID
-import com.wiatec.blive.model.AuthService
+import com.wiatec.blive.model.UserService
 import com.wiatec.blive.pojo.UserInfo
 import com.wiatec.blive.utils.RMaster
 import retrofit2.Call
@@ -41,8 +39,8 @@ class DownloadUserIcon: Runnable {
                 return
             }
         }
-        RMaster.retrofit.create(AuthService::class.java)
-                .user(userId)
+        RMaster.retrofit.create(UserService::class.java)
+                .getUserInfo(userId)
                 .enqueue(object : Callback<UserInfo>{
                     override fun onResponse(call: Call<UserInfo>?, response: Response<UserInfo>?) {
                         val userInfo = response!!.body() ?: return
@@ -62,7 +60,7 @@ class DownloadUserIcon: Runnable {
         HttpMaster.download(CommonApplication.context)
                 .url(url)
                 .path(FileUtil.getPathWith("icon"))
-                .startDownload(object: DownloadListener{
+                .startDownload(object: DownloadListener {
                     override fun onPending(downloadInfo: DownloadInfo?) {
                     }
 

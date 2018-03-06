@@ -55,7 +55,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     }
 
     private fun initToolBar() {
-        val paddingTop = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT )
+        val paddingTop = if (Build.VERSION.SDK_INT < 19 )
             WindowUtil.getStatusBarHeight(this) else 0
         toolBarMain.setPadding(0, paddingTop, 0, 0)
         toolBarMain.title = getString(R.string.signin)
@@ -232,8 +232,8 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
         enableButton(btSignUp, progressBarSignUp)
         if(execute && resultInfo != null){
             if(resultInfo.code == ResultInfo.CODE_OK){
-                if(resultInfo.t != null) {
-                    SPUtil.put(KEY_AUTH_USERNAME, resultInfo.t!!.username)
+                if(resultInfo.data != null) {
+                    SPUtil.put(KEY_AUTH_USERNAME, resultInfo.data!!.username)
                 }
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SMILE)
                 showSignInFromSignUp()
@@ -248,15 +248,15 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
     override fun signIn(execute: Boolean, resultInfo: ResultInfo<TokenInfo>?) {
         if(execute && resultInfo != null){
             if(resultInfo.code == ResultInfo.CODE_OK){
-                if(resultInfo.t != null) {
-                    SPUtil.put(KEY_AUTH_TOKEN, resultInfo.t!!.token)
-                    if(resultInfo.t!!.userInfo != null) {
-                        SPUtil.put(KEY_AUTH_USERNAME, resultInfo.t!!.userInfo!!.username)
-                        SPUtil.put(KEY_AUTH_USER_ID, resultInfo.t!!.userId)
-                        SPUtil.put(KEY_AUTH_ICON_URL, resultInfo.t!!.userInfo!!.icon)
+                if(resultInfo.data != null) {
+                    SPUtil.put(KEY_AUTH_TOKEN, resultInfo.data!!.token)
+                    if(resultInfo.data!!.userInfo != null) {
+                        SPUtil.put(KEY_AUTH_USERNAME, resultInfo.data!!.userInfo!!.username)
+                        SPUtil.put(KEY_AUTH_USER_ID, resultInfo.data!!.userId)
+                        SPUtil.put(KEY_AUTH_ICON_URL, resultInfo.data!!.userInfo!!.icon)
+                        jumpToMain()
                     }
                 }
-                presenter!!.getPush(resultInfo.t!!.userInfo!!.username!!, RTMP_TOKEN)
             }else {
                 enableButton(btSignIn, progressBarSignIn)
                 EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
@@ -267,37 +267,6 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
         }
     }
 
-    override fun getPush(execute: Boolean, pushInfo: PushInfo?) {
-        if(execute && pushInfo != null) {
-            SPUtil.put(KEY_AUTH_PUSH_URL, pushInfo.data!!.push_full_url)
-            val userId = SPUtil.get(KEY_AUTH_USER_ID, 0) as Int
-            if(userId == 0){
-                EmojiToast.show("signin server error 02", EmojiToast.EMOJI_SAD)
-            }else {
-                presenter!!.updateChannel(ChannelInfo(pushInfo.data!!.push_full_url!!,
-                        pushInfo.data!!.play_url!!, userId))
-            }
-        }else{
-            enableButton(btSignIn, progressBarSignIn)
-            EmojiToast.show("live server error", EmojiToast.EMOJI_SAD)
-        }
-    }
-
-    override fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?) {
-        enableButton(btSignIn, progressBarSignIn)
-        if(execute && resultInfo != null) {
-            if(resultInfo.code != ResultInfo.CODE_OK){
-                EmojiToast.show(resultInfo.message, EmojiToast.EMOJI_SAD)
-            }
-            val channelInfo  = resultInfo.t
-            if(channelInfo != null) {
-                SPUtil.put(KEY_CHANNEL_ID, channelInfo.id.toString())
-            }
-        }else{
-            EmojiToast.show("signin server error 03", EmojiToast.EMOJI_SAD)
-        }
-        jumpToMain()
-    }
 
     override fun resetPassword(execute: Boolean, resultInfo: ResultInfo<UserInfo>?) {
         enableButton(btReset, progressBarReset)

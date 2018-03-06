@@ -16,8 +16,8 @@ class PushPresenter(val push: Push): BasePresenter<Push>() {
 
     private val channelProvider = ChannelProvider()
 
-    fun updateChannelName(channelInfo: ChannelInfo){
-        channelProvider.updateChannelName(channelInfo, object : LoadListener<ResultInfo<ChannelInfo>>{
+    fun updateChannelTitleAndMessage(channelInfo: ChannelInfo){
+        channelProvider.updateChannelTitleAndMessage(channelInfo, object : LoadListener<ResultInfo<ChannelInfo>>{
             override fun onSuccess(execute: Boolean, t: ResultInfo<ChannelInfo>?) {
                 push.updateChannelName(execute, t)
             }

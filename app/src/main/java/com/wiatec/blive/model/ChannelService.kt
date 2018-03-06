@@ -13,22 +13,34 @@ import java.io.File
  */
 interface ChannelService {
 
+    /**
+     * get all available channel list
+     */
     @GET("channel/")
     fun listChannel(): Call<List<ChannelInfo>>
 
+    /**
+     * update channel title and message
+     * params: title, message, user id
+     */
     @Headers("Content-Type: application/json;charset=UTF-8")
-    @PUT("channel/update")
-    fun updateChannel(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
+    @PUT("channel/update/1")
+    fun updateChannelTitleAndMessage(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
 
+    /**
+     * update channel price
+     * params: price, user id
+     */
     @Headers("Content-Type: application/json;charset=UTF-8")
-    @PUT("channel/title")
-    fun updateChannelName(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
+    @PUT("channel/update/4")
+    fun updatePrice(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
 
+    /**
+     * update channel status
+     * params: activate: 1->activate 0->deactivate, user id
+     */
     @PUT("channel/status/{activate}/{userId}")
     fun updateChannelStatus(@Path("activate") activate:Int,  @Path("userId")userId: Int):
             Call<ResultInfo<ChannelInfo>>
 
-    @Headers("Content-Type: application/json;charset=UTF-8")
-    @PUT("channel/price")
-    fun updatePrice(@Body channelInfo: ChannelInfo): Call<ResultInfo<ChannelInfo>>
 }

@@ -51,9 +51,9 @@
         <activity
             android:name=".view.activity.PushActivity"
             android:screenOrientation="landscape" />
-
-        <activity android:name=".view.activity.UserSettingsActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".view.activity.UserSettingsActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -65,7 +65,8 @@
                 android:resource="@xml/paths" />
         </provider>
 
-
+        <activity android:name=".view.activity.PlayLocalActivity"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

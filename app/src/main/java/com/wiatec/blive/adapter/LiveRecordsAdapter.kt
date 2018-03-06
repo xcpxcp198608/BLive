@@ -1,9 +1,7 @@
 package com.wiatec.blive.adapter
 
-import android.graphics.Bitmap
 import android.view.View
 import com.px.common.adapter.BaseRecycleAdapter
-import com.px.common.image.ImageMaster
 import com.px.common.utils.Logger
 import com.px.common.utils.MediaUtil
 import com.wiatec.blive.R

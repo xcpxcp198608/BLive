@@ -25,7 +25,7 @@ void main () {
     highp float hue = atan (Q, I);
     highp float chroma = sqrt (I * I + Q * Q);
 
-    // Make the user's adjustments
+    // Make the getUserInfo's adjustments
     hue += (-hueAdjust); //why negative rotation?
 
     // Convert back to YIQ

@@ -57,8 +57,8 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
 
     override fun createPresenter(): LiveFragmentPresenter = LiveFragmentPresenter(this)
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater?.inflate(R.layout.fragment_live , container , false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_live , container , false)
         presenter!!.listChannel()
         progressBar = view!!.findViewById(R.id.progressBar) as ProgressBar
         progressBar!!.visibility = View.VISIBLE
@@ -135,7 +135,7 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
     }
 
     private fun showPayDialog(payInfo: PayInfo){
-        MaterialDialog.Builder(context)
+        MaterialDialog.Builder(context!!)
                 .title(getString(R.string.notice))
                 .content("you will pay "+
                         payInfo.price + " "+
@@ -143,11 +143,11 @@ class FragmentLiveChannel : BaseFragment<LiveChannel, LiveFragmentPresenter>(), 
                         payInfo.description)
                 .positiveText(getString(R.string.confirm))
                 .negativeText(getString(R.string.cancel))
-                .onPositive { dialog, which ->
+                .onPositive { dialog, _ ->
                     PayPalManager.pay(this@FragmentLiveChannel, payInfo)
                     dialog.dismiss()
                 }
-                .onNegative { dialog, which ->
+                .onNegative { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()

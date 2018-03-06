@@ -44,7 +44,7 @@ timestamp='2012-12-06'
 # and recognize all the CPU types, system types and aliases
 # that are meaningful with *any* GNU software.
 # Each package is responsible for reporting which valid configurations
-# it does not support.  The user should be able to distinguish
+# it does not support.  The getUserInfo should be able to distinguish
 # a failure to support a valid configuration from a meaningless
 # configuration.
 
@@ -118,7 +118,7 @@ case $# in
     exit 1;;
 esac
 
-# Separate what the user gave into CPU-COMPANY and OS or KERNEL-OS (if any).
+# Separate what the getUserInfo gave into CPU-COMPANY and OS or KERNEL-OS (if any).
 # Here we must recognize all the valid KERNEL-OS combinations.
 maybe_os=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\2/'`
 case $maybe_os in

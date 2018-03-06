@@ -9,6 +9,4 @@ import com.wiatec.blive.pojo.*
 interface Splash {
     fun checkUpgrade(execute: Boolean, upgradeInfo: UpgradeInfo?)
     fun validateToken(execute: Boolean, resultInfo: ResultInfo<TokenInfo>?)
-    fun getPush(execute: Boolean, pushInfo: PushInfo?)
-    fun updateChannel(execute: Boolean, resultInfo: ResultInfo<ChannelInfo>?)
 }

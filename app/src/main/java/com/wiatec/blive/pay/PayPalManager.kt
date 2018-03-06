@@ -62,7 +62,7 @@ object PayPalManager {
                   onPayResultListener: OnPayResultListener) {
         if (requestCode == PAY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_CANCELED) {
-                onPayResultListener.customerCancel("user cancel pay")
+                onPayResultListener.customerCancel("getUserInfo cancel pay")
                 return
             }
             if (resultCode == Activity.RESULT_OK) {

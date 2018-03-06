@@ -65,7 +65,7 @@ endfunc
 // return: 0 if transfers neon -> arm transfers take more than 10 cycles
 //         nonzero otherwise
 function x264_cpu_fast_neon_mrc_test
-    // check for user access to performance counters
+    // check for getUserInfo access to performance counters
     mrc         p15, 0, r0, c9, c14, 0
     cmp         r0, #0
     bxeq        lr

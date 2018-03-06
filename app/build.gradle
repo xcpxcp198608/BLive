@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.wiatec.blive"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 102
         versionName "v1.0.2"
         multiDexEnabled true
@@ -50,17 +50,14 @@ android {
     }
 
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def outputFile = output.outputFile
+        variant.outputs.all { output ->
             def fileName = ""
-            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                if (variant.buildType.name == 'release') {
-                    fileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}_release.apk"
-                } else if (variant.buildType.name == 'debug') {
-                    fileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}_${defaultConfig.versionCode}_debug.apk"
-                }
-                output.outputFile = new File(outputFile.parent, fileName)
+            if (variant.buildType.name == 'release') {
+                fileName = applicationId + "_" + variant.versionName + "_" + variant.versionCode + "_${releaseTime()}.apk"
+            } else if (variant.buildType.name == 'debug') {
+                fileName = applicationId + "_" + variant.versionName + "_" + variant.versionCode + "_debug.apk"
             }
+            outputFileName = new File(fileName)
         }
     }
 
@@ -69,6 +66,7 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
 }
 
 static def releaseTime() {
@@ -76,31 +74,25 @@ static def releaseTime() {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile project(':common')
-    compile project(':push')
+
+
     compile('com.github.LuckSiege.PictureSelector:picture_library:v2.1.3') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    compile 'commons-io:commons-io:2.5'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'org.jetbrains.anko:anko:0.10.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'com.afollestad.material-dialogs:commons:0.9.4.5'
-    testCompile 'junit:junit:4.12'
+    compile 'com.afollestad.material-dialogs:commons:0.9.5.0'
+    compile "org.java-websocket:Java-WebSocket:1.3.5"
     compile 'com.paypal.sdk:paypal-android-sdk:2.15.3'
-    compile files('src/main/libs/goeasy-sdk-0.3.8.jar')
     compile files('src/main/libs/slf4j-api-1.7.2.jar')
+    compile project(':module_common')
+    compile project(':push')
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://maven.google.com/'
-        name 'Google'
-    }
-}
+
