@@ -124,7 +124,7 @@ class SplashActivity : BaseActivity<Splash, SplashPresenter>(), Splash {
                 return
             }
         }
-        presenter!!.updateUserInfo()
+        presenter!!.getUserInfo()
         jumpToMain()
     }
 

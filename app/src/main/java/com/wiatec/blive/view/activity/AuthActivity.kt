@@ -254,6 +254,7 @@ class AuthActivity : BaseActivity<Auth, AuthPresenter>(), Auth, View.OnClickList
                         SPUtil.put(KEY_AUTH_USERNAME, resultInfo.data!!.userInfo!!.username)
                         SPUtil.put(KEY_AUTH_USER_ID, resultInfo.data!!.userId)
                         SPUtil.put(KEY_AUTH_ICON_URL, resultInfo.data!!.userInfo!!.icon)
+                        presenter!!.getUserInfo()
                         jumpToMain()
                     }
                 }

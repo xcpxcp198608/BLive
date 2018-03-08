@@ -5,6 +5,7 @@ import com.wiatec.blive.model.ChannelProvider
 import com.wiatec.blive.model.LoadListener
 import com.wiatec.blive.pojo.*
 import com.wiatec.blive.view.activity.Auth
+import java.security.AuthProvider
 
 /**
  * Created by patrick on 16/10/2017.
@@ -45,6 +46,10 @@ class AuthPresenter(val auth: Auth): BasePresenter<Auth>(){
             override fun onFailure(e: String) {
             }
         })
+    }
+
+    fun getUserInfo(){
+        userProvider.getUserInfo(null)
     }
 
 

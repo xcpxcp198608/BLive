@@ -13,8 +13,7 @@ class SplashPresenter(private var splash: Splash): BasePresenter<Splash>() {
 
     private val upgradeProvider = UpgradeProvider()
     private val tokenProvider = TokenProvider()
-    private val authProvider: UserProvider = UserProvider()
-    private val channelProvider: ChannelProvider = ChannelProvider()
+    private val userProvider: UserProvider = UserProvider()
 
     fun checkUpgrade(){
         upgradeProvider.checkUpgrade(object: LoadListener<UpgradeInfo>{
@@ -47,7 +46,7 @@ class SplashPresenter(private var splash: Splash): BasePresenter<Splash>() {
     }
 
 
-    fun updateUserInfo(){
-        authProvider.getUserInfo(null)
+    fun getUserInfo(){
+        userProvider.getUserInfo(null)
     }
 }

@@ -154,6 +154,9 @@ class PlayActivity : AppCompatActivity(), View.OnClickListener {
         if(stringBuilder == null) {
             stringBuilder = StringBuilder()
         }
+        if(comment.startsWith("blive group count:")){
+            return
+        }
         stringBuilder!!.append("\r\n")
         stringBuilder!!.append(comment)
         tvComment.text = stringBuilder.toString()
