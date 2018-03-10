@@ -103,7 +103,6 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     }
 
     private fun initFragment() {
-
         val fragmentList = ArrayList<Fragment>()
         val fragmentLive = FragmentLiveChannel()
         val fragmentRecords = FragmentLiveRecords()
@@ -129,10 +128,10 @@ class MainActivity : BaseActivity<Main, MainPresenter>(), Main, View.OnClickList
     }
 
     private fun showConsentDialog() {
-        val dialog = AlertDialog.Builder(this).create()
-        dialog.show()
-        val window = dialog.window
-        window.setContentView(R.layout.dialog_consent)
+//        val dialog = AlertDialog.Builder(this).create()
+//        dialog.show()
+//        val window = dialog.window
+//        window.setContentView(R.layout.dialog_consent)
     }
 
     override fun onClick(v: View?) {

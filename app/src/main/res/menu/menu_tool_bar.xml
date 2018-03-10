@@ -5,7 +5,7 @@
     <item
         android:id="@+id/item_about"
         android:title="@string/about"
-        android:icon="@drawable/ic_info_outline_white_36dp"
+        android:icon="@drawable/ic_share_white_36dp"
         app:showAsAction="withText|ifRoom"/>
 
 </menu>
